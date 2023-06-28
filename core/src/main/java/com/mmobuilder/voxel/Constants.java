@@ -11,7 +11,7 @@ public class Constants {
     /**
      * The X length of the world in chunks.
      */
-    public static final int WORLD_X_LENGTH = 2;
+    public static final int WORLD_X_LENGTH = 16;
     /**
      * The Z length of the world in chunks.
      */
@@ -19,7 +19,7 @@ public class Constants {
     /**
      * The length and width of a chunk. Min value 2.
      */
-    public static final int CHUNK_SIZE = 1;
+    public static final int CHUNK_SIZE = 8;
     /**
      * The length and width of a tile in meters.
      */

@@ -2,20 +2,16 @@ package com.mmobuilder.voxel;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelCache;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.model.MeshPart;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.utils.StringBuilder;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -27,17 +23,9 @@ import static com.mmobuilder.voxel.Constants.*;
  */
 @RequiredArgsConstructor
 public class ChunkHandler extends ApplicationAdapter {
-    private static final int CUBE_FACES = 6;
-    /**
-     * A quad has 4 vertices, one at each corner
-     */
-    private static final int QUAD_VERTICES = 4;
     private final ConcurrentMap<Chunk.Key, Chunk> chunkConcurrentMap = new ConcurrentHashMap<>();
     private final VoxelCube voxelCube = new VoxelCube();
-    private final StringBuilder stringBuilder;
-    private final ModelBuilder modelBuilder;
     private final PerspectiveCamera camera;
-
     private int currentChunkX;
     private int currentChunkZ;
 
@@ -45,13 +33,42 @@ public class ChunkHandler extends ApplicationAdapter {
     public void create() {
         // Get the texture info ready
         Texture texture = new Texture(Gdx.files.internal("dirt.png"));
-        Color color = Color.GRAY;
+        Color color = Color.WHITE;
+
+        // Populate chunk data
+        for (int chunkX = 0; chunkX < WORLD_X_LENGTH; chunkX++) {
+            for (int chunkZ = 0; chunkZ < WORLD_Z_LENGTH; chunkZ++) {
+                Chunk chunk = getChunk(chunkX, chunkZ, true);
+
+                for (int x = 0; x < CHUNK_SIZE; x++) {
+                    for (int z = 0; z < CHUNK_SIZE; z++) {
+                        for (int y = 0; y < CHUNK_SIZE; y++) {
+                            Random random = new Random();
+                            int rand = random.nextInt(0, 10);
+
+                            Block block = new Block();
+                            assert chunk != null;
+                            chunk.getBlocks()[x][y][z] = block;
+                            block.setX(x);
+                            block.setY(y);
+                            block.setZ(z);
+
+                            if (rand < 4) {
+                                block.setBlockType(BlockType.SOLID);
+                            } else {
+                                block.setBlockType(BlockType.AIR);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         // Generate chunk
         for (int chunkX = 0; chunkX < WORLD_X_LENGTH; chunkX++) {
             for (int chunkZ = 0; chunkZ < WORLD_Z_LENGTH; chunkZ++) {
                 Chunk chunk = getChunk(chunkX, chunkZ, true);
-                Model model = generateChunkModel(texture, color, chunkX, chunkZ);
+                Model model = voxelCube.generateChunkModel(texture, color, chunk);
                 Objects.requireNonNull(chunk).setModel(model);
             }
         }
@@ -60,73 +77,6 @@ public class ChunkHandler extends ApplicationAdapter {
         for (Chunk chunk : chunkConcurrentMap.values()) {
             System.out.println("[CHUNK DATA] " + chunk);
         }
-
-//        exampleModifyChunkTile();
-    }
-
-    /**
-     * Generates a chunk landscape model.
-     *
-     * @param texture The texture to paint on this model.
-     * @param color   The color we want to apply to the texture.
-     * @param chunkX  The X location of this chunk.
-     * @param chunkZ  The Z location of this chunk.
-     * @return A model that represents a landscape.
-     */
-    @SuppressWarnings("PointlessArithmeticExpression")
-    private Model generateChunkModel(Texture texture, Color color, int chunkX, int chunkZ) {
-        // Define the attributes for this model
-        VertexAttribute position = new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE);
-        VertexAttribute colorUnpacked = new VertexAttribute(VertexAttributes.Usage.ColorUnpacked, 4, ShaderProgram.COLOR_ATTRIBUTE);
-        VertexAttribute textureCoordinates = new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0");
-
-        // Init vertices array
-        float[] vertices = new float[((position.numComponents + colorUnpacked.numComponents + textureCoordinates.numComponents) * QUAD_VERTICES * CHUNK_SIZE * CHUNK_SIZE) * CUBE_FACES];
-
-        // Populate the vertices array with data
-        int vertexOffset = 0;
-        for (int x = 0; x < CHUNK_SIZE; x++) {
-            for (int z = 0; z < CHUNK_SIZE; z++) {
-                int y = 0;
-                vertexOffset = voxelCube.createTop(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
-                vertexOffset = voxelCube.createBottom(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
-                vertexOffset = voxelCube.createLeft(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
-                vertexOffset = voxelCube.createRight(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
-                vertexOffset = voxelCube.createFront(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
-                vertexOffset = voxelCube.createBack(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
-            }
-        }
-
-        // Generate the indices
-        int size = (6 * CHUNK_SIZE * CHUNK_SIZE) * CUBE_FACES;
-        short[] indices = new short[size];
-        short j = 0;
-        for (int i = 0; i < indices.length; i += 6, j += 4) {
-            indices[i + 0] = (short) (j + 2);
-            indices[i + 1] = (short) (j + 1);
-            indices[i + 2] = (short) (j + 3);
-            indices[i + 3] = (short) (j + 0);
-            indices[i + 4] = (short) (j + 3);
-            indices[i + 5] = (short) (j + 1);
-        }
-
-        // Create the mesh
-        Mesh mesh = new Mesh(true, vertices.length, indices.length, position, colorUnpacked, textureCoordinates);
-        mesh.setVertices(vertices);
-        mesh.setIndices(indices);
-
-        // Create the MeshPart I'd
-        stringBuilder.append(chunkX);
-        stringBuilder.append(SLASH);
-        stringBuilder.append(chunkZ);
-
-        // Create the MeshPart
-        MeshPart meshPart = new MeshPart(stringBuilder.toStringAndClear(), mesh, 0, size, GL30.GL_TRIANGLES);
-
-        // Create a model out of the MeshPart
-        modelBuilder.begin();
-        modelBuilder.part(meshPart, new Material("texture", TextureAttribute.createDiffuse(texture)));
-        return modelBuilder.end();
     }
 
     /**

@@ -1,12 +1,126 @@
 package com.mmobuilder.voxel;
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.model.MeshPart;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.StringBuilder;
 
-import static com.mmobuilder.voxel.Constants.TILE_SIZE;
+import static com.mmobuilder.voxel.Constants.*;
 
 public class VoxelCube {
-    public int createTop(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
+
+    /**
+     * A cube has 6 faces.
+     */
+    private static final int CUBE_FACES = 6;
+    /**
+     * A quad has 4 vertices, one at each corner.
+     */
+    private static final int QUAD_VERTICES = 4;
+
+    private final StringBuilder stringBuilder = new StringBuilder();
+    private final ModelBuilder modelBuilder = new ModelBuilder();
+
+    /**
+     * Generates a chunk landscape model.
+     *
+     * @param texture The texture to paint on this model.
+     * @param color   The color we want to apply to the texture.
+     * @return A model that represents a landscape.
+     */
+    public Model generateChunkModel(Texture texture, Color color, Chunk chunk) {
+        // Define the attributes for this model
+        VertexAttribute position = new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE);
+        VertexAttribute colorUnpacked = new VertexAttribute(VertexAttributes.Usage.ColorUnpacked, 4, ShaderProgram.COLOR_ATTRIBUTE);
+        VertexAttribute textureCoordinates = new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0");
+
+        // Init vertices array
+        float[] vertices = new float[((position.numComponents + colorUnpacked.numComponents + textureCoordinates.numComponents) * QUAD_VERTICES * CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * CUBE_FACES];
+
+        // Populate the vertices array with data
+        int vertexOffset = 0;
+        for (int x = 0; x < CHUNK_SIZE; x++) {
+            for (int z = 0; z < CHUNK_SIZE; z++) {
+                for (int y = 0; y < CHUNK_SIZE; y++) {
+                    if (chunk.getBlocks()[x][y][z].getBlockType() == BlockType.AIR) continue;
+
+                    // Check neighboring blocks to determine which faces to cull
+                    boolean cullTop = shouldCullFace(chunk, x, y + 1, z);
+                    boolean cullBottom = shouldCullFace(chunk, x, y - 1, z);
+                    boolean cullLeft = shouldCullFace(chunk, x - 1, y, z);
+                    boolean cullRight = shouldCullFace(chunk, x + 1, y, z);
+                    boolean cullFront = shouldCullFace(chunk, x, y, z - 1);
+                    boolean cullBack = shouldCullFace(chunk, x, y, z + 1);
+
+                    if (!cullTop)
+                        vertexOffset = createTop(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                    if (!cullBottom)
+                        vertexOffset = createBottom(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                    if (!cullLeft)
+                        vertexOffset = createLeft(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                    if (!cullRight)
+                        vertexOffset = createRight(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                    if (!cullFront)
+                        vertexOffset = createFront(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                    if (!cullBack)
+                        vertexOffset = createBack(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                    System.out.println("XYZ: " + x + "/" + y + "/" + z);
+                }
+            }
+        }
+
+        // Generate the indices
+        int size = (6 * CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * CUBE_FACES;
+        short[] indices = new short[size];
+        generateIndices(indices);
+
+        // Create the mesh
+        Mesh mesh = new Mesh(true, vertices.length, indices.length, position, colorUnpacked, textureCoordinates);
+        mesh.setVertices(vertices);
+        mesh.setIndices(indices);
+
+        // Create the MeshPart I'd
+        stringBuilder.append(chunk.getChunkX());
+        stringBuilder.append(SLASH);
+        stringBuilder.append(chunk.getChunkZ());
+
+        // Create the MeshPart
+        MeshPart meshPart = new MeshPart(stringBuilder.toStringAndClear(), mesh, 0, size, GL30.GL_TRIANGLES);
+
+        // Create a model out of the MeshPart
+        modelBuilder.begin();
+        modelBuilder.part(meshPart, new Material("texture", TextureAttribute.createDiffuse(texture)));
+        return modelBuilder.end();
+    }
+
+    private boolean shouldCullFace(Chunk chunk, int x, int y, int z) {
+        if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE) {
+            // The neighboring block is outside the chunk, so we should not cull the face
+            return false;
+        }
+
+        return chunk.getBlocks()[x][y][z].getBlockType() != BlockType.AIR;
+    }
+
+    @SuppressWarnings("PointlessArithmeticExpression")
+    public void generateIndices(short[] indices) {
+        short j = 0;
+        for (int i = 0; i < indices.length; i += 6, j += 4) {
+            indices[i + 0] = (short) (j + 2);
+            indices[i + 1] = (short) (j + 1);
+            indices[i + 2] = (short) (j + 3);
+            indices[i + 3] = (short) (j + 0);
+            indices[i + 4] = (short) (j + 3);
+            indices[i + 5] = (short) (j + 1);
+        }
+    }
+
+    private int createTop(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
         float u1 = textureRegion.getU();
         float v1 = textureRegion.getV();
         float u2 = textureRegion.getU2();
@@ -59,7 +173,7 @@ public class VoxelCube {
         return vertexOffset;
     }
 
-    public int createBottom(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
+    private int createBottom(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
         float u1 = textureRegion.getU();
         float v1 = textureRegion.getV();
         float u2 = textureRegion.getU2();
@@ -108,7 +222,7 @@ public class VoxelCube {
         return vertexOffset;
     }
 
-    public int createLeft(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
+    private int createLeft(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
         float u1 = textureRegion.getU();
         float v1 = textureRegion.getV();
         float u2 = textureRegion.getU2();
@@ -157,7 +271,7 @@ public class VoxelCube {
         return vertexOffset;
     }
 
-    public int createRight(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
+    private int createRight(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
         float u1 = textureRegion.getU();
         float v1 = textureRegion.getV();
         float u2 = textureRegion.getU2();
@@ -207,7 +321,7 @@ public class VoxelCube {
         return vertexOffset;
     }
 
-    public int createFront(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
+    private int createFront(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
         float u1 = textureRegion.getU();
         float v1 = textureRegion.getV();
         float u2 = textureRegion.getU2();
@@ -256,7 +370,7 @@ public class VoxelCube {
         return vertexOffset;
     }
 
-    public int createBack(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
+    private int createBack(float[] vertices, int vertexOffset, float x, float z, float y, Color tileColor, TextureRegion textureRegion) {
         float u1 = textureRegion.getU();
         float v1 = textureRegion.getV();
         float u2 = textureRegion.getU2();

@@ -17,6 +17,7 @@ import static com.mmobuilder.voxel.Constants.SLASH;
 @RequiredArgsConstructor
 public class Chunk {
     private final int chunkX, chunkZ;
+    private final Block[][][] blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
     private Model model;
     private ModelInstance modelInstance;
     private ModelCache modelCache;

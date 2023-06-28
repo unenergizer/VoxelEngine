@@ -79,7 +79,7 @@ public class Main extends ApplicationAdapter {
         xyzModelInstance.transform.translate(0, 0, 0);
 
         // Init the ChunkHandler
-        chunkHandler = new ChunkHandler(stringBuilder, modelBuilder, camera);
+        chunkHandler = new ChunkHandler(camera);
         chunkHandler.create();
 
         // Init Scene2D and VisUI
