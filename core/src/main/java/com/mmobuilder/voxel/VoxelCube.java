@@ -2,15 +2,10 @@ package com.mmobuilder.voxel;
 
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.model.MeshPart;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.utils.StringBuilder;
 
-import static com.mmobuilder.voxel.Constants.*;
+import static com.mmobuilder.voxel.Constants.CHUNK_SIZE;
+import static com.mmobuilder.voxel.Constants.TILE_SIZE;
 
 public class VoxelCube {
 
@@ -23,17 +18,14 @@ public class VoxelCube {
      */
     private static final int QUAD_VERTICES = 4;
 
-    private final StringBuilder stringBuilder = new StringBuilder();
-    private final ModelBuilder modelBuilder = new ModelBuilder();
-
     /**
      * Generates a chunk landscape model.
      *
      * @param texture The texture to paint on this model.
      * @param color   The color we want to apply to the texture.
-     * @return A model that represents a landscape.
+     * @return A mesh that represents this cube.
      */
-    public Model generateChunkModel(Texture texture, Color color, Chunk chunk) {
+    public Mesh generateChunkModel(Texture texture, Color color, Chunk chunk) {
         // Define the attributes for this model
         VertexAttribute position = new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE);
         VertexAttribute colorUnpacked = new VertexAttribute(VertexAttributes.Usage.ColorUnpacked, 4, ShaderProgram.COLOR_ATTRIBUTE);
@@ -69,6 +61,7 @@ public class VoxelCube {
                         vertexOffset = createFront(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
                     if (!cullBack)
                         vertexOffset = createBack(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+
                     System.out.println("XYZ: " + x + "/" + y + "/" + z);
                 }
             }
@@ -84,18 +77,7 @@ public class VoxelCube {
         mesh.setVertices(vertices);
         mesh.setIndices(indices);
 
-        // Create the MeshPart I'd
-        stringBuilder.append(chunk.getChunkX());
-        stringBuilder.append(SLASH);
-        stringBuilder.append(chunk.getChunkZ());
-
-        // Create the MeshPart
-        MeshPart meshPart = new MeshPart(stringBuilder.toStringAndClear(), mesh, 0, size, GL30.GL_TRIANGLES);
-
-        // Create a model out of the MeshPart
-        modelBuilder.begin();
-        modelBuilder.part(meshPart, new Material("texture", TextureAttribute.createDiffuse(texture)));
-        return modelBuilder.end();
+        return mesh;
     }
 
     private boolean shouldCullFace(Chunk chunk, int x, int y, int z) {

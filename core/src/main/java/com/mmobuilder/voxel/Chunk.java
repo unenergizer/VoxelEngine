@@ -1,10 +1,12 @@
 package com.mmobuilder.voxel;
 
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelCache;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import static com.mmobuilder.voxel.Constants.CHUNK_SIZE;
 import static com.mmobuilder.voxel.Constants.SLASH;
@@ -18,25 +20,22 @@ import static com.mmobuilder.voxel.Constants.SLASH;
 public class Chunk {
     private final int chunkX, chunkZ;
     private final Block[][][] blocks = new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE];
-    private Model model;
-    private ModelInstance modelInstance;
-    private ModelCache modelCache;
+    private Mesh mesh;
 
-    public void setModel(Model model) {
-        this.model = model;
-        this.modelInstance = new ModelInstance(model);
-        modelInstance.transform.setTranslation(chunkX * CHUNK_SIZE, 0, chunkZ * CHUNK_SIZE);
+    private Material material;
 
-        // Set up the model cache for this model
-        modelCache = new ModelCache();
-        modelCache.begin();
-        modelCache.add(modelInstance);
-        modelCache.end();
+    @Setter
+    private Texture texture;
+
+    public void setMesh(Mesh mesh) {
+        this.mesh = mesh;
+
+        material = new Material("texture", TextureAttribute.createDiffuse(texture));
     }
 
     @Override
     public String toString() {
-        return "Chunk X/Z: " + chunkX + SLASH + chunkZ + ", Nodes: " + model.nodes.size + ", Meshes: " + model.meshes.size + ", MeshParts: " + model.meshParts.size;
+        return "Chunk X/Z: " + chunkX + SLASH + chunkZ + ", NumVertices: " + mesh.getNumVertices() + ", NumIndices: " + mesh.getNumIndices();
     }
 
     /**

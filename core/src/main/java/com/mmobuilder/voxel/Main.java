@@ -54,8 +54,8 @@ public class Main extends ApplicationAdapter {
         // Init 3D Environment
         modelBatch = new ModelBatch();
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-        environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1.f));
+        environment.add(new DirectionalLight().set(1, 1, 1, 0, -1, 0));
 
         // Init Camera
         camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -92,7 +92,8 @@ public class Main extends ApplicationAdapter {
 
         modelCache.begin();
         modelCache.add(xyzModelInstance);
-        chunkHandler.getNearbyChunks(modelCache);
+        modelCache.add(chunkHandler);
+//        chunkHandler.getNearbyChunks(modelCache);
         modelCache.end();
     }
 
