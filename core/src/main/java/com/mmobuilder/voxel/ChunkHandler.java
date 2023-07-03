@@ -32,6 +32,8 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
 
     @Override
     public void create() {
+        Random random = new Random();
+
         // Get the texture info ready
         Texture texture = new Texture(Gdx.files.internal("dirt.png"), true);
         texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Nearest);
@@ -40,25 +42,28 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
         // Populate chunk data
         for (int chunkX = 0; chunkX < WORLD_X_LENGTH; chunkX++) {
             for (int chunkZ = 0; chunkZ < WORLD_Z_LENGTH; chunkZ++) {
+
                 Chunk chunk = getChunk(chunkX, chunkZ, true);
                 chunk.setTexture(texture);
-                for (int x = 0; x < CHUNK_SIZE; x++) {
-                    for (int z = 0; z < CHUNK_SIZE; z++) {
-                        for (int y = 0; y < CHUNK_SIZE; y++) {
-                            Random random = new Random();
-                            int rand = random.nextInt(0, 10);
 
-                            Block block = new Block();
-                            assert chunk != null;
-                            chunk.getBlocks()[x][y][z] = block;
-                            block.setX(x);
-                            block.setY(y);
-                            block.setZ(z);
+                for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
+                    for (int x = 0; x < CHUNK_SIZE; x++) {
+                        for (int z = 0; z < CHUNK_SIZE; z++) {
+                            for (int y = 0; y < CHUNK_SIZE; y++) {
+                                int rand = random.nextInt(0, 10);
 
-                            if (rand < 6) {
-                                block.setBlockType(BlockType.SOLID);
-                            } else {
-                                block.setBlockType(BlockType.AIR);
+                                Block block = new Block();
+                                assert chunk != null;
+                                chunk.getBlocks().get(sectionY)[x][y][z] = block;
+                                block.setX(x);
+                                block.setY(y);
+                                block.setZ(z);
+
+                                if (rand < 6) {
+                                    block.setBlockType(BlockType.SOLID);
+                                } else {
+                                    block.setBlockType(BlockType.AIR);
+                                }
                             }
                         }
                     }
@@ -70,8 +75,10 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
         for (int chunkX = 0; chunkX < WORLD_X_LENGTH; chunkX++) {
             for (int chunkZ = 0; chunkZ < WORLD_Z_LENGTH; chunkZ++) {
                 Chunk chunk = getChunk(chunkX, chunkZ, true);
-                Mesh mesh = voxelCube.generateChunkModel(texture, color, chunk);
-                Objects.requireNonNull(chunk).setMesh(mesh);
+                for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
+                    Mesh mesh = voxelCube.generateChunkModel(texture, color, chunk, sectionY);
+                    Objects.requireNonNull(chunk).setMesh(sectionY, mesh);
+                }
             }
         }
 
@@ -109,22 +116,31 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
     @Override
     public void dispose() {
         for (Chunk chunk : chunkConcurrentMap.values()) {
-            if (chunk != null && chunk.getMesh() != null) chunk.getMesh().dispose();
+            if (chunk != null) {
+                for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
+                    Mesh mesh = chunk.getMeshMap().get(sectionY);
+                    mesh.dispose();
+                }
+            }
         }
     }
 
 
     @Override
     public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool) {
-        if (chunkConcurrentMap.isEmpty()) return;
         for (Chunk chunk : chunkConcurrentMap.values()) {
-            Renderable renderable = pool.obtain();
-            renderable.material = chunk.getMaterial();
-            renderable.meshPart.mesh = chunk.getMesh();
-            renderable.meshPart.offset = 0;
-            renderable.meshPart.size = chunk.getMesh().getNumVertices();
-            renderable.meshPart.primitiveType = GL20.GL_TRIANGLES;
-            renderables.add(renderable);
+            for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
+
+                Mesh mesh = chunk.getMeshMap().get(sectionY);
+                Renderable renderable = pool.obtain();
+                renderable.material = chunk.getMaterial();
+                renderable.meshPart.mesh = mesh;
+                renderable.meshPart.offset = 0;
+                renderable.meshPart.size = mesh.getNumIndices();
+                renderable.meshPart.primitiveType = GL20.GL_TRIANGLES;
+                renderable.meshPart.center.set(CHUNK_SIZE / 2f, CHUNK_SIZE / 2f, CHUNK_SIZE / 2f);
+                renderables.add(renderable);
+            }
         }
     }
 

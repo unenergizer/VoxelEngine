@@ -11,11 +11,15 @@ public class Constants {
     /**
      * The X length of the world in chunks.
      */
-    public static final int WORLD_X_LENGTH = 16;
+    public static final int WORLD_X_LENGTH = 6;
     /**
      * The Z length of the world in chunks.
      */
     public static final int WORLD_Z_LENGTH = WORLD_X_LENGTH;
+    /**
+     * The Y length of the world in chunks.
+     */
+    public static final int WORLD_Y_LENGTH = WORLD_X_LENGTH;
     /**
      * The length and width of a chunk. Min value 2.
      */

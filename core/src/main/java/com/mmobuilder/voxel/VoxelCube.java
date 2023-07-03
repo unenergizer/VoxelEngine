@@ -21,11 +21,12 @@ public class VoxelCube {
     /**
      * Generates a chunk landscape model.
      *
-     * @param texture The texture to paint on this model.
-     * @param color   The color we want to apply to the texture.
+     * @param texture  The texture to paint on this model.
+     * @param color    The color we want to apply to the texture.
+     * @param sectionY
      * @return A mesh that represents this cube.
      */
-    public Mesh generateChunkModel(Texture texture, Color color, Chunk chunk) {
+    public Mesh generateChunkModel(Texture texture, Color color, Chunk chunk, int sectionY) {
         // Define the attributes for this model
         VertexAttribute position = new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE);
         VertexAttribute colorUnpacked = new VertexAttribute(VertexAttributes.Usage.ColorUnpacked, 4, ShaderProgram.COLOR_ATTRIBUTE);
@@ -39,30 +40,34 @@ public class VoxelCube {
         for (int x = 0; x < CHUNK_SIZE; x++) {
             for (int z = 0; z < CHUNK_SIZE; z++) {
                 for (int y = 0; y < CHUNK_SIZE; y++) {
-                    if (chunk.getBlocks()[x][y][z].getBlockType() == BlockType.AIR) continue;
+                    if (chunk.getBlocks().get(sectionY)[x][y][z].getBlockType() == BlockType.AIR) continue;
 
                     // Check neighboring blocks to determine which faces to cull
-                    boolean cullTop = shouldCullFace(chunk, x, y + 1, z);
-                    boolean cullBottom = shouldCullFace(chunk, x, y - 1, z);
-                    boolean cullLeft = shouldCullFace(chunk, x - 1, y, z);
-                    boolean cullRight = shouldCullFace(chunk, x + 1, y, z);
-                    boolean cullFront = shouldCullFace(chunk, x, y, z - 1);
-                    boolean cullBack = shouldCullFace(chunk, x, y, z + 1);
+                    boolean cullTop = shouldCullFace(chunk, sectionY, x, y + 1, z);
+                    boolean cullBottom = shouldCullFace(chunk, sectionY, x, y - 1, z);
+                    boolean cullLeft = shouldCullFace(chunk, sectionY, x - 1, y, z);
+                    boolean cullRight = shouldCullFace(chunk, sectionY, x + 1, y, z);
+                    boolean cullFront = shouldCullFace(chunk, sectionY, x, y, z - 1);
+                    boolean cullBack = shouldCullFace(chunk, sectionY, x, y, z + 1);
+
+                    float worldX = x + CHUNK_SIZE * chunk.getChunkX();
+                    float worldZ = z + CHUNK_SIZE * chunk.getChunkZ();
+                    float worldY = y + CHUNK_SIZE * sectionY;
 
                     if (!cullTop)
-                        vertexOffset = createTop(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                        vertexOffset = createTop(vertices, vertexOffset, worldX, worldZ, worldY, color, new TextureRegion(texture));
                     if (!cullBottom)
-                        vertexOffset = createBottom(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                        vertexOffset = createBottom(vertices, vertexOffset, worldX, worldZ, worldY, color, new TextureRegion(texture));
                     if (!cullLeft)
-                        vertexOffset = createLeft(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                        vertexOffset = createLeft(vertices, vertexOffset, worldX, worldZ, worldY, color, new TextureRegion(texture));
                     if (!cullRight)
-                        vertexOffset = createRight(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                        vertexOffset = createRight(vertices, vertexOffset, worldX, worldZ, worldY, color, new TextureRegion(texture));
                     if (!cullFront)
-                        vertexOffset = createFront(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                        vertexOffset = createFront(vertices, vertexOffset, worldX, worldZ, worldY, color, new TextureRegion(texture));
                     if (!cullBack)
-                        vertexOffset = createBack(vertices, vertexOffset, x, z, y, color, new TextureRegion(texture));
+                        vertexOffset = createBack(vertices, vertexOffset, worldX, worldZ, worldY, color, new TextureRegion(texture));
 
-                    System.out.println("XYZ: " + x + "/" + y + "/" + z);
+//                    System.out.println("XYZ: " + x + "/" + y + "/" + z);
                 }
             }
         }
@@ -80,13 +85,13 @@ public class VoxelCube {
         return mesh;
     }
 
-    private boolean shouldCullFace(Chunk chunk, int x, int y, int z) {
+    private boolean shouldCullFace(Chunk chunk, int sectionY, int x, int y, int z) {
         if (x < 0 || x >= CHUNK_SIZE || y < 0 || y >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE) {
             // The neighboring block is outside the chunk, so we should not cull the face
             return false;
         }
 
-        return chunk.getBlocks()[x][y][z].getBlockType() != BlockType.AIR;
+        return chunk.getBlocks().get(sectionY)[x][y][z].getBlockType() != BlockType.AIR;
     }
 
     @SuppressWarnings("PointlessArithmeticExpression")
