@@ -2,19 +2,22 @@ package com.mmobuilder.voxel;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g3d.ModelCache;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.RenderableProvider;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import static com.mmobuilder.voxel.Constants.*;
 
@@ -24,9 +27,11 @@ import static com.mmobuilder.voxel.Constants.*;
  */
 @RequiredArgsConstructor
 public class ChunkHandler extends ApplicationAdapter implements RenderableProvider {
-    private final ConcurrentMap<Chunk.Key, Chunk> chunkConcurrentMap = new ConcurrentHashMap<>();
-    private final VoxelCube voxelCube = new VoxelCube();
+    @Getter
+    private final Map<Chunk.Key, Chunk> chunkHashMap = new HashMap<>();
     private final PerspectiveCamera camera;
+    @Getter
+    private ChunkMeshGenerator chunkMeshGenerator;
     private int currentChunkX;
     private int currentChunkZ;
 
@@ -37,33 +42,43 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
         // Get the texture info ready
         Texture texture = new Texture(Gdx.files.internal("dirt.png"), true);
         texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Nearest);
-        Color color = Color.WHITE;
 
-        // Populate chunk data
+        chunkMeshGenerator = new ChunkMeshGenerator(this, texture);
+
+        ///// Populate chunk data /////////////
+        // Loop through all chunks
+        int blocksCreated = 0;
         for (int chunkX = 0; chunkX < WORLD_X_LENGTH; chunkX++) {
             for (int chunkZ = 0; chunkZ < WORLD_Z_LENGTH; chunkZ++) {
+                for (int section = 0; section < VERTICAL_CHUNK_SECTIONS; section++) {
 
-                Chunk chunk = getChunk(chunkX, chunkZ, true);
-                chunk.setTexture(texture);
+                    System.out.println("--- [ CHUNK: " + chunkX + SLASH + section + SLASH + chunkZ + " ] -----------------------------------------------------");
 
-                for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
+                    // Loop through each section
                     for (int x = 0; x < CHUNK_SIZE; x++) {
                         for (int z = 0; z < CHUNK_SIZE; z++) {
                             for (int y = 0; y < CHUNK_SIZE; y++) {
-                                int rand = random.nextInt(0, 10);
 
-                                Block block = new Block();
-                                assert chunk != null;
-                                chunk.getBlocks().get(sectionY)[x][y][z] = block;
-                                block.setX(x);
-                                block.setY(y);
-                                block.setZ(z);
+                                int rand = random.nextInt(0, 100);
 
-                                if (rand < 6) {
-                                    block.setBlockType(BlockType.SOLID);
-                                } else {
+                                int worldX = x + chunkX * CHUNK_SIZE;
+                                int worldY = y + section * CHUNK_SIZE;
+                                int worldZ = z + chunkZ * CHUNK_SIZE;
+
+                                Block block = new Block(worldX, worldY, worldZ); // TODO: This should be local coordinates...?
+                                block.setTexture(texture);
+                                block.setMaterial(new Material(TextureAttribute.createDiffuse((texture))));
+                                block.setBlockColor(Color.WHITE);
+                                block.setBlockType(BlockType.SOLID);
+                                if (rand < 80) {
                                     block.setBlockType(BlockType.AIR);
                                 }
+
+                                System.out.println("[BLOCK " + blocksCreated + "] BlockType: " + block.getBlockType());
+                                System.out.println("[World Coordinates] XYZ: " + worldX + SLASH + worldY + SLASH + worldZ);
+                                System.out.println("[Local Coordinates] XYZ: " + x + SLASH + y + SLASH + z);
+                                setBlock(worldX, worldY, worldZ, block);
+                                blocksCreated++;
                             }
                         }
                     }
@@ -71,35 +86,50 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
             }
         }
 
-        // Generate chunk
-        for (int chunkX = 0; chunkX < WORLD_X_LENGTH; chunkX++) {
-            for (int chunkZ = 0; chunkZ < WORLD_Z_LENGTH; chunkZ++) {
-                Chunk chunk = getChunk(chunkX, chunkZ, true);
-                for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
-                    Mesh mesh = voxelCube.generateChunkModel(texture, color, chunk, sectionY);
-                    Objects.requireNonNull(chunk).setMesh(sectionY, mesh);
-                }
-            }
-        }
-
         // Print chunk data debug
-        for (Chunk chunk : chunkConcurrentMap.values()) {
+        for (Chunk chunk : chunkHashMap.values()) {
             System.out.println("[CHUNK DATA] " + chunk);
         }
     }
 
+    Block getBlock(int worldX, int worldY, int worldZ) {
+        if (worldY < 0 || worldY >= WORLD_HEIGHT) throw new RuntimeException("Y value is invalid. Value: " + worldY);
+
+        int chunkX = Math.floorDiv(worldX, CHUNK_SIZE);
+        int chunkZ = Math.floorDiv(worldZ, CHUNK_SIZE);
+        Chunk chunk = getChunk(chunkX, chunkZ, false);
+
+        if (chunk == null) return null; // No blocks in this chunk
+
+        int localX = worldX - chunkX * CHUNK_SIZE;
+        int localZ = worldZ - chunkZ * CHUNK_SIZE;
+        return chunk.getBlock(localX, worldY, localZ);
+    }
+
+    void setBlock(int worldX, int worldY, int worldZ, Block block) {
+        if (worldY < 0 || worldY >= WORLD_HEIGHT) throw new RuntimeException("Y value is invalid. Value: " + worldY);
+
+        int chunkX = Math.floorDiv(worldX, CHUNK_SIZE);
+        int chunkZ = Math.floorDiv(worldZ, CHUNK_SIZE);
+        Chunk chunk = getChunk(chunkX, chunkZ, true);
+
+        assert chunk != null;
+        int localX = worldX - chunkX * CHUNK_SIZE;
+        int localZ = worldZ - chunkZ * CHUNK_SIZE;
+        chunk.setBlock(localX, worldY, localZ, block);
+    }
 
     /**
      * Gets a world chunk.
      *
-     * @param x           the x location of the chunk
-     * @param z           the z location of the chunk
-     * @param createChunk if true, we will create a chunk if it doesn't exist
+     * @param chunkX      The x location of the chunk. Do not use world coordinates here!
+     * @param chunkZ      The z location of the chunk. Do not use world coordinates here!
+     * @param createChunk if true, we will create a chunk if it doesn't exist.
      * @return A world chunk.
      */
-    private Chunk getChunk(int x, int z, boolean createChunk) {
-        int hashCode = x * 31 + z;
-        for (Map.Entry<Chunk.Key, Chunk> chunkEntry : chunkConcurrentMap.entrySet()) {
+    private Chunk getChunk(int chunkX, int chunkZ, boolean createChunk) {
+        int hashCode = chunkX * 31 + chunkZ;
+        for (Map.Entry<Chunk.Key, Chunk> chunkEntry : chunkHashMap.entrySet()) {
             Chunk.Key key = chunkEntry.getKey();
             Chunk chunk = chunkEntry.getValue();
             if (key.hashCode() == hashCode) return chunk;
@@ -107,66 +137,38 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
 
         if (!createChunk) return null;
         // No chunk exists, create a new one
-        Chunk chunk = new Chunk(x, z);
-        System.out.println("[NEW CHUNK] Location: " + x + SLASH + z);
-        chunkConcurrentMap.put(new Chunk.Key(x, z), chunk);
+        Chunk chunk = new Chunk(this, chunkX, chunkZ);
+        System.out.println("[NEW CHUNK] Location: " + chunkX + SLASH + chunkZ);
+        chunkHashMap.put(new Chunk.Key(chunkX, chunkZ), chunk);
         return chunk;
     }
 
     @Override
     public void dispose() {
-        for (Chunk chunk : chunkConcurrentMap.values()) {
-            if (chunk != null) {
-                for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
-                    Mesh mesh = chunk.getMeshMap().get(sectionY);
-                    mesh.dispose();
-                }
-            }
+        for (Chunk chunk : chunkHashMap.values()) {
+            Model model = chunk.getModel();
+            if (model != null) model.dispose();
         }
     }
-
 
     @Override
     public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool) {
-        for (Chunk chunk : chunkConcurrentMap.values()) {
-            for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
 
-                Mesh mesh = chunk.getMeshMap().get(sectionY);
-                Renderable renderable = pool.obtain();
-                renderable.material = chunk.getMaterial();
-                renderable.meshPart.mesh = mesh;
-                renderable.meshPart.offset = 0;
-                renderable.meshPart.size = mesh.getNumIndices();
-                renderable.meshPart.primitiveType = GL20.GL_TRIANGLES;
-                renderable.meshPart.center.set(CHUNK_SIZE / 2f, CHUNK_SIZE / 2f, CHUNK_SIZE / 2f);
-                renderables.add(renderable);
-            }
-        }
-    }
-
-    /**
-     * This is going to get the nearby chunks and only render those. This isn't the best way to do this
-     * and this should only be considered a hack.
-     */
-    public void getNearbyChunks(ModelCache cache) {
+//        for (Chunk chunk : chunkHashMap.values()) {
+//            MeshWrapper meshWrapper = generateChunkModel(chunk);
+//            meshList.add(meshWrapper);
+//        }
+//        System.out.println("Mesh Count: " + meshList.size());
 //
-//        int camX = (int) camera.position.x;
-//        int camZ = (int) camera.position.z;
-//        int chunkX = camX / CHUNK_SIZE;
-//        int chunkZ = camZ / CHUNK_SIZE;
-//
-//        for (int x = chunkX - CHUNK_VIEW_RADIUS; x < chunkX + CHUNK_VIEW_RADIUS + TILE_SIZE; x++) {
-//            for (int z = chunkZ - CHUNK_VIEW_RADIUS; z < chunkZ + CHUNK_VIEW_RADIUS + TILE_SIZE; z++) {
-//                if (x < 0 || z < 0) continue; // No negative chunks or models instances exist here (in this project)...
-//
-//                Chunk chunk = getChunk(x, z, false);
-//                if (chunk == null) continue;
-//
-//                ModelCache modelCache = chunk.getModelCache();
-//                if (modelCache == null) continue;
-//
-//                cache.add(modelCache);
-//            }
+//        for (Chunk chunk : chunkHashMap.values()) {
+//            Renderable renderable = pool.obtain();
+//            renderable.material = meshWrapper.getMaterial();
+//            renderable.meshPart.mesh = meshWrapper.getMesh();
+//            renderable.meshPart.offset = 0;
+//            renderable.meshPart.size = meshWrapper.getMesh().getNumIndices();
+//            renderable.meshPart.primitiveType = GL20.GL_TRIANGLES;
+//            renderable.meshPart.center.set(CHUNK_SIZE / 2f, CHUNK_SIZE / 2f, CHUNK_SIZE / 2f);
+//            renderables.add(renderable);
 //        }
     }
 

@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.StringBuilder;
+import lombok.Getter;
 
 /**
  * The main class, the {@link ApplicationListener} is the implementation shared by all platforms.
@@ -36,6 +37,7 @@ public class Main extends ApplicationAdapter {
     /**
      * Handles the creation of land chunks.
      */
+    @Getter
     private ChunkHandler chunkHandler;
     /**
      * Updates the user interface (debug data)
@@ -66,13 +68,6 @@ public class Main extends ApplicationAdapter {
         camera.far = 1000f;
         camera.update();
 
-        // Init Input
-        InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        camController = new FirstPersonCameraController(camera);
-        camController.setVelocity(30);
-        inputMultiplexer.addProcessor(camController);
-        Gdx.input.setInputProcessor(inputMultiplexer);
-
         // Init Models
         xyzModel = modelBuilder.createXYZCoordinates(10, new Material(), VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorUnpacked);
         xyzModelInstance = new ModelInstance(xyzModel);
@@ -85,21 +80,38 @@ public class Main extends ApplicationAdapter {
         // Init Scene2D and VisUI
         stageHandler = new StageHandler(stringBuilder, camera, chunkHandler);
         stageHandler.create();
+
+        // Init Input
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        camController = new FirstPersonCameraController(camera);
+        camController.setVelocity(30);
+        inputMultiplexer.addProcessor(new KeyboardInput(this));
+        inputMultiplexer.addProcessor(camController);
+        Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
-    private void updateModelInstanceList() {
-        if (!chunkHandler.hasLeftChunk()) return;
+    public void updateModelInstanceList(boolean bypassChunkCheck) {
+        if (!bypassChunkCheck && !chunkHandler.hasLeftChunk()) return;
 
+        for (Chunk chunk : chunkHandler.getChunkHashMap().values()) {
+            chunkHandler.getChunkMeshGenerator().generateChunkModel(chunk);
+        }
+
+        modelCache.dispose();
         modelCache.begin();
         modelCache.add(xyzModelInstance);
-        modelCache.add(chunkHandler);
-//        chunkHandler.getNearbyChunks(modelCache);
+
+        for (Chunk chunk : chunkHandler.getChunkHashMap().values()) {
+            Model model = chunk.getModel();
+            if (model != null) modelCache.add(new ModelInstance(model));
+        }
+
         modelCache.end();
     }
 
     @Override
     public void render() {
-        updateModelInstanceList();
+//        updateModelInstanceList(false);
         camController.update();
         stageHandler.updateDebugText();
 

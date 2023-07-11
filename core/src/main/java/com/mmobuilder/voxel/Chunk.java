@@ -1,14 +1,7 @@
 package com.mmobuilder.voxel;
 
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.Model;
 import lombok.Getter;
-import lombok.Setter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.mmobuilder.voxel.Constants.*;
 
@@ -18,29 +11,51 @@ import static com.mmobuilder.voxel.Constants.*;
  */
 @Getter
 public class Chunk {
+    private final ChunkHandler chunkhandler;
     private final int chunkX, chunkZ;
-    private final Map<Integer, Block[][][]> blocks = new HashMap<>();
-    private final Map<Integer, Mesh> meshMap = new HashMap<>();
+    private final ChunkSection[] sections = new ChunkSection[VERTICAL_CHUNK_SECTIONS];
 
-    private Material material;
+    private Model model;
 
-    @Setter
-    private Texture texture;
-
-    public Chunk(int chunkX, int chunkZ) {
+    public Chunk(ChunkHandler chunkHandler, int chunkX, int chunkZ) {
+        this.chunkhandler = chunkHandler;
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
+    }
 
-        for (int sectionY = 0; sectionY < WORLD_Y_LENGTH; sectionY++) {
-            blocks.put(sectionY, new Block[CHUNK_SIZE][CHUNK_SIZE][CHUNK_SIZE]);
+    void setModel(Model model) {
+        if (this.model != null) model.dispose();
+        this.model = model;
+    }
+
+    Block getBlock(int localX, int worldY, int localZ) {
+        if (worldY < 0 || worldY >= WORLD_HEIGHT) throw new IndexOutOfBoundsException("Y value out of range! Value: " + worldY);
+
+        int sectionId = Math.floorDiv(worldY, CHUNK_SIZE);
+        int localY = worldY - sectionId * CHUNK_SIZE;
+        ChunkSection section = sections[sectionId];
+
+        if (section == null) return null; // No blocks in this section
+        return section.getBlock(localX, localY, localZ);
+    }
+
+    void setBlock(int localX, int worldY, int localZ, Block block) {
+        if (worldY < 0 || worldY >= WORLD_HEIGHT) throw new IndexOutOfBoundsException("Y value out of range! Value: " + worldY);
+
+        int sectionId = Math.floorDiv(worldY, CHUNK_SIZE);
+        int localY = worldY - sectionId * CHUNK_SIZE;
+        ChunkSection section = sections[sectionId];
+
+        if (section == null) {
+            if (block == null) return; // Don't need to create a section for a null block
+
+            section = new ChunkSection();
+            sections[sectionId] = section;
         }
+
+        section.setBlock(localX, localY, localZ, block);
     }
 
-    public void setMesh(int sectionY, Mesh mesh) {
-        meshMap.put(sectionY, mesh);
-
-        material = new Material("texture", TextureAttribute.createDiffuse(texture));
-    }
 
     @Override
     public String toString() {
