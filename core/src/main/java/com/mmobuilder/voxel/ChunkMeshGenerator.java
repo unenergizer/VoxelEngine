@@ -43,29 +43,7 @@ public class ChunkMeshGenerator {
         VertexAttribute textureCoordinates = new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0");
 
         // Init vertices array
-        // TODO: WE ARE GENERATING A BIGGER ARRAY FOR EVERY CUBE SIZE, BUT NOT EVERY CUBE SIZE GETS RENDERED!!!!!
         float[] vertices = new float[((position.numComponents + colorUnpacked.numComponents + textureCoordinates.numComponents) * QUAD_VERTICES * CHUNK_SIZE * CHUNK_SIZE * WORLD_HEIGHT) * CUBE_FACES];
-
-        System.out.println("[CreateMesh] Vertices: " + vertices.length);
-
-//        int faces = 0;
-//        for (int y = 0; y < WORLD_HEIGHT; y++) {
-//            for (int x = 0; x < CHUNK_SIZE; x++) {
-//                for (int z = 0; z < CHUNK_SIZE; z++) {
-//
-//                    int worldX = x + CHUNK_SIZE * chunk.getChunkX();
-//                    int worldZ = z + CHUNK_SIZE * chunk.getChunkZ();
-//                    // Check neighboring blocks to determine which faces to cull
-//                    boolean top = isSolid(worldX, y + 1, worldZ);
-//                    boolean bot = isSolid(worldX, y - 1, worldZ);
-//                    boolean lef = isSolid(worldX - 1, y, worldZ);
-//                    boolean rig = isSolid(worldX + 1, y, worldZ);
-//                    boolean fro = isSolid(worldX, y, worldZ - 1);
-//                    boolean bac = isSolid(worldX, y, worldZ + 1);
-//                    if (top) faces++;
-//                }
-//            }
-//        }
 
         // Populate the vertices array with data
         int vertexOffset = 0;
