@@ -24,7 +24,7 @@ public class Chunk {
     }
 
     void setModel(Model model) {
-        if (this.model != null) model.dispose();
+//        if (this.model != null) model.dispose(); // Crashes game engine
         this.model = model;
     }
 
