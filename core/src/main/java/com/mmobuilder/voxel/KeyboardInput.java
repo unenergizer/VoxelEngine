@@ -51,6 +51,56 @@ public class KeyboardInput implements InputProcessor {
             return true;
         }
 
+        if (keycode == Input.Keys.NUM_0) {
+            main.getChunkHandler().fillChunkData(0);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_1) {
+            main.getChunkHandler().fillChunkData(10);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_2) {
+            main.getChunkHandler().fillChunkData(20);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_3) {
+            main.getChunkHandler().fillChunkData(30);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_4) {
+            main.getChunkHandler().fillChunkData(40);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_5) {
+            main.getChunkHandler().fillChunkData(50);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_6) {
+            main.getChunkHandler().fillChunkData(60);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_7) {
+            main.getChunkHandler().fillChunkData(70);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_8) {
+            main.getChunkHandler().fillChunkData(80);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.NUM_9) {
+            main.getChunkHandler().fillChunkData(90);
+            main.updateModelInstanceList(true);
+        }
+
         return false;
     }
 

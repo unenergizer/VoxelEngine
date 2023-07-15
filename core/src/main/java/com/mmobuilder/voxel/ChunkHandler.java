@@ -30,20 +30,28 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
     @Getter
     private final Map<Chunk.Key, Chunk> chunkHashMap = new HashMap<>();
     private final PerspectiveCamera camera;
+    private final Random random = new Random();
     @Getter
     private ChunkMeshGenerator chunkMeshGenerator;
     private int currentChunkX;
     private int currentChunkZ;
 
+    private Texture texture;
+
+
     @Override
     public void create() {
-        Random random = new Random();
-
         // Get the texture info ready
-        Texture texture = new Texture(Gdx.files.internal("dirt.png"), true);
+        texture = new Texture(Gdx.files.internal("VR010_tex01.png"), true);
         texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Nearest);
 
         chunkMeshGenerator = new ChunkMeshGenerator(this, texture);
+
+        fillChunkData(98);
+    }
+
+    public void fillChunkData(int percentage) {
+        if (percentage < 0 || percentage >= 99) throw new RuntimeException("Percentage must be between 0 and 98");
 
         ///// Populate chunk data /////////////
         // Loop through all chunks
@@ -70,7 +78,7 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
                                 block.setMaterial(new Material(TextureAttribute.createDiffuse((texture))));
                                 block.setBlockColor(Color.WHITE);
                                 block.setBlockType(BlockType.SOLID);
-                                if (rand < 80) {
+                                if (rand < percentage) {
                                     block.setBlockType(BlockType.AIR);
                                 }
 
