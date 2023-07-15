@@ -93,11 +93,12 @@ public class Main extends ApplicationAdapter {
     public void updateModelInstanceList(boolean bypassChunkCheck) {
         if (!bypassChunkCheck && !chunkHandler.hasLeftChunk()) return;
 
+        modelCache.dispose();
+
         for (Chunk chunk : chunkHandler.getChunkHashMap().values()) {
             chunkHandler.getChunkMeshGenerator().generateChunkModel(chunk);
         }
 
-        modelCache.dispose();
         modelCache.begin();
         modelCache.add(xyzModelInstance);
 
