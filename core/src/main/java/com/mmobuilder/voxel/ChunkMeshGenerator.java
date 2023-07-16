@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-import static com.mmobuilder.voxel.Constants.*;
+import static com.mmobuilder.voxel.Constants.CHUNK_SIZE;
+import static com.mmobuilder.voxel.Constants.WORLD_HEIGHT;
 
 public class ChunkMeshGenerator {
 
@@ -56,9 +57,6 @@ public class ChunkMeshGenerator {
 
                     Block block = chunkHandler.getBlock(worldX, y, worldZ);
                     if (block == null || !block.isVisible()) continue;
-
-                    System.out.println("[CreateMesh] Chunk: " + chunk.getChunkX() + SLASH + chunk.getChunkZ() + ", World: " + worldX + SLASH + y + SLASH + worldZ + ", Local: " + x + SLASH + z);
-                    System.out.println("[CreateMesh] Block: " + block);
 
                     // Check neighboring blocks to determine which faces to cull
                     boolean top = isSolid(worldX, y + 1, worldZ);
