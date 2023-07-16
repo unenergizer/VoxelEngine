@@ -51,7 +51,7 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
     }
 
     public void fillChunkData(int percentage) {
-        if (percentage < 0 || percentage >= 99) throw new RuntimeException("Percentage must be between 0 and 98");
+        if (percentage < 0 || percentage > 100) throw new RuntimeException("Percentage must be between 0 and 98");
 
         ///// Populate chunk data /////////////
         // Loop through all chunks

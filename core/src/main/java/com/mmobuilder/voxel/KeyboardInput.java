@@ -1,10 +1,10 @@
 package com.mmobuilder.voxel;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 
-public class KeyboardInput implements InputProcessor {
+public class KeyboardInput extends InputAdapter {
 
     private final Main main;
 
@@ -49,11 +49,6 @@ public class KeyboardInput implements InputProcessor {
             System.out.println("Setting color white");
             System.out.println(block);
             return true;
-        }
-
-        if (keycode == Input.Keys.NUM_0) {
-            main.getChunkHandler().fillChunkData(0);
-            main.updateModelInstanceList(true);
         }
 
         if (keycode == Input.Keys.NUM_1) {
@@ -101,42 +96,16 @@ public class KeyboardInput implements InputProcessor {
             main.updateModelInstanceList(true);
         }
 
+        if (keycode == Input.Keys.NUM_0) {
+            main.getChunkHandler().fillChunkData(0);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.MINUS) {
+            main.getChunkHandler().fillChunkData(100);
+            main.updateModelInstanceList(true);
+        }
+
         return false;
     }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
-        return false;
-    }
-
 }
