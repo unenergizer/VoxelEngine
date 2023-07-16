@@ -124,7 +124,7 @@ public class ChunkMeshGenerator {
     }
 
     private boolean isSolid(int worldX, int worldY, int worldZ) {
-        if (worldY < 0 || worldY >= WORLD_HEIGHT) return false;
+        if (BlockUtil.isBlockOutsideWorldY(worldY)) return false;
         Block block = chunkHandler.getBlock(worldX, worldY, worldZ);
 
         if (block == null) return false;

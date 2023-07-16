@@ -29,7 +29,7 @@ public class Chunk {
     }
 
     Block getBlock(int localX, int worldY, int localZ) {
-        if (worldY < 0 || worldY >= WORLD_HEIGHT) throw new IndexOutOfBoundsException("Y value out of range! Value: " + worldY);
+        if (BlockUtil.isBlockOutsideWorldY(worldY)) throw new IndexOutOfBoundsException("Y value out of range! Value: " + worldY);
 
         int sectionId = Math.floorDiv(worldY, CHUNK_SIZE);
         int localY = worldY - sectionId * CHUNK_SIZE;
@@ -40,7 +40,7 @@ public class Chunk {
     }
 
     void setBlock(int localX, int worldY, int localZ, Block block) {
-        if (worldY < 0 || worldY >= WORLD_HEIGHT) throw new IndexOutOfBoundsException("Y value out of range! Value: " + worldY);
+        if (BlockUtil.isBlockOutsideWorldY(worldY)) throw new IndexOutOfBoundsException("Y value out of range! Value: " + worldY);
 
         int sectionId = Math.floorDiv(worldY, CHUNK_SIZE);
         int localY = worldY - sectionId * CHUNK_SIZE;
