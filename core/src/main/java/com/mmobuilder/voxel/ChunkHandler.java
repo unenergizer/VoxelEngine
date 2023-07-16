@@ -101,7 +101,10 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
     }
 
     Block getBlock(int worldX, int worldY, int worldZ) {
-        if (worldY < 0 || worldY >= WORLD_HEIGHT) throw new RuntimeException("Y value is invalid. Value: " + worldY);
+        if (worldY < 0 || worldY >= WORLD_HEIGHT) {
+            System.err.println("Y value is invalid. Value: " + worldY);
+            return null;
+        }
 
         int chunkX = Math.floorDiv(worldX, CHUNK_SIZE);
         int chunkZ = Math.floorDiv(worldZ, CHUNK_SIZE);
