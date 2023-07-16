@@ -6,11 +6,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.utils.FirstPersonCameraController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.StringBuilder;
@@ -46,12 +47,17 @@ public class Main extends ApplicationAdapter {
     private PerspectiveCamera camera;
     private ModelBatch modelBatch;
     private Environment environment;
-    private FirstPersonCameraController camController;
+    private FirstPersonMovementController camController;
     private Model xyzModel;
     private ModelInstance xyzModelInstance;
 
+    private Texture crosshairTexture;
+    private SpriteBatch batch;
+
     @Override
     public void create() {
+        batch = new SpriteBatch();
+        crosshairTexture = new Texture(Gdx.files.internal("crosshair.png"));
 
         // Init 3D Environment
         modelBatch = new ModelBatch();
@@ -82,11 +88,13 @@ public class Main extends ApplicationAdapter {
         stageHandler.create();
 
         // Init Input
+        Gdx.input.setCursorCatched(true);
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        camController = new FirstPersonCameraController(camera);
+        camController = new FirstPersonMovementController(camera);
         camController.setVelocity(30);
         inputMultiplexer.addProcessor(new KeyboardInput(this));
         inputMultiplexer.addProcessor(camController);
+        inputMultiplexer.addProcessor(new FirstPersonCameraController(camera));
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
 
@@ -119,10 +127,17 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
+        // Render 3D
         modelBatch.begin(camera);
         modelBatch.render(modelCache, environment);
         modelBatch.end();
 
+        // Render Crosshair
+        batch.begin();
+        batch.draw(crosshairTexture, Gdx.graphics.getWidth() / 2f - crosshairTexture.getWidth() / 2f, Gdx.graphics.getHeight() / 2f - crosshairTexture.getHeight() / 2f);
+        batch.end();
+
+        // Render UI
         stageHandler.render();
     }
 
@@ -134,5 +149,7 @@ public class Main extends ApplicationAdapter {
         chunkHandler.dispose();
         modelBatch.dispose();
         xyzModel.dispose();
+
+        crosshairTexture.dispose();
     }
 }
