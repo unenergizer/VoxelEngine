@@ -92,6 +92,7 @@ public class Main extends ApplicationAdapter {
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         camController = new FirstPersonMovementController(camera);
         camController.setVelocity(30);
+        inputMultiplexer.addProcessor(new BlockPickController(this, chunkHandler, camera));
         inputMultiplexer.addProcessor(new KeyboardInput(this));
         inputMultiplexer.addProcessor(camController);
         inputMultiplexer.addProcessor(new FirstPersonCameraController(camera));
