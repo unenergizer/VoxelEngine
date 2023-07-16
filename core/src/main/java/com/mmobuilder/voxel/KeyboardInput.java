@@ -4,6 +4,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 
+import static com.mmobuilder.voxel.Constants.*;
+
 public class KeyboardInput extends InputAdapter {
 
     private final Main main;
@@ -103,6 +105,18 @@ public class KeyboardInput extends InputAdapter {
 
         if (keycode == Input.Keys.MINUS) {
             main.getChunkHandler().fillChunkData(100);
+            main.updateModelInstanceList(true);
+        }
+
+        if (keycode == Input.Keys.EQUALS) {
+            main.getChunkHandler().fillChunkData(100);
+
+            int x = WORLD_X_LENGTH * CHUNK_SIZE / 2;
+            int y = WORLD_HEIGHT / 2;
+            int z = WORLD_Z_LENGTH * CHUNK_SIZE / 2;
+
+            Block block = main.getChunkHandler().getBlock(x, y, z);
+            block.setBlockType(BlockType.SOLID);
             main.updateModelInstanceList(true);
         }
 
