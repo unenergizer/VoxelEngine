@@ -74,7 +74,7 @@ public class Main extends ApplicationAdapter {
         camera.position.set(0f, 10f, -5f);
         camera.lookAt(0, 0, 0);
         camera.up.set(Vector3.Y);
-        camera.near = 1f;
+        camera.near = 0.01f;
         camera.far = 1000f;
         camera.update();
 
