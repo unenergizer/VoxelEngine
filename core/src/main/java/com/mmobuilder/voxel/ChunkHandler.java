@@ -44,6 +44,7 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
         // Get the texture info ready
         texture = new Texture(Gdx.files.internal("VR010_tex01.png"), true);
         texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Nearest);
+        texture.setAnisotropicFilter(GLTexture.getMaxAnisotropicFilterLevel());
 
         chunkMeshGenerator = new ChunkMeshGenerator(this, texture);
 
