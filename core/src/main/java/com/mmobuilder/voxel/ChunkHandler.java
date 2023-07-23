@@ -102,7 +102,7 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
         }
     }
 
-    Block getBlock(int worldX, int worldY, int worldZ) {
+    public Block getBlock(int worldX, int worldY, int worldZ) {
         if (BlockUtil.isBlockOutsideWorldY(worldY)) {
             System.err.println("Y value is invalid. Value: " + worldY);
             return null;
@@ -119,7 +119,7 @@ public class ChunkHandler extends ApplicationAdapter implements RenderableProvid
         return chunk.getBlock(localX, worldY, localZ);
     }
 
-    void setBlock(int worldX, int worldY, int worldZ, Block block) {
+    public void setBlock(int worldX, int worldY, int worldZ, Block block) {
         if (BlockUtil.isBlockOutsideWorldY(worldY)) throw new RuntimeException("Y value is invalid. Value: " + worldY);
 
         int chunkX = Math.floorDiv(worldX, CHUNK_SIZE);

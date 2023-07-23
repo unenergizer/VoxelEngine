@@ -15,6 +15,10 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.StringBuilder;
+import com.mmobuilder.voxel.input.BlockPickController;
+import com.mmobuilder.voxel.input.FirstPersonCameraController;
+import com.mmobuilder.voxel.input.FirstPersonMovementController;
+import com.mmobuilder.voxel.input.KeyboardInput;
 import lombok.Getter;
 
 /**

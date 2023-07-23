@@ -1,4 +1,4 @@
-package com.mmobuilder.voxel;
+package com.mmobuilder.voxel.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
