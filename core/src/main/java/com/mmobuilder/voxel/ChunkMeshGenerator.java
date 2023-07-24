@@ -1,12 +1,16 @@
 package com.mmobuilder.voxel;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import net.mgsx.gltf.loaders.shared.geometry.MeshTangentSpaceGenerator;
+import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute;
+import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute;
 
 import static com.mmobuilder.voxel.Constants.CHUNK_SIZE;
 import static com.mmobuilder.voxel.Constants.WORLD_HEIGHT;
@@ -14,7 +18,7 @@ import static com.mmobuilder.voxel.Constants.WORLD_HEIGHT;
 public class ChunkMeshGenerator {
 
     private final ModelBuilder modelBuilder = new ModelBuilder();
-    private final VoxelCube voxelCube = new VoxelCube();
+    private final VoxelCube voxelCube = new VoxelCube(true, true, true, true);
 
     private final ChunkHandler chunkHandler;
 
@@ -29,9 +33,27 @@ public class ChunkMeshGenerator {
      */
     private static final int QUAD_VERTICES = 4;
 
+    Texture diffuseTexture;
+    Texture normalTexture;
+    Texture mrTexture;
+
     public ChunkMeshGenerator(ChunkHandler chunkHandler, Texture texture) {
         this.chunkHandler = chunkHandler;
         this.texture = texture;
+
+        // TODO: RELOCATE THIS TEXTURE INITIALIZATION TO SOMEWHERE ELSE!
+        diffuseTexture = new Texture(Gdx.files.classpath("textures/red_bricks_04_diff_1k.jpg"), true);
+        normalTexture = new Texture(Gdx.files.classpath("textures/red_bricks_04_nor_gl_1k.jpg"), true);
+        mrTexture = new Texture(Gdx.files.classpath("textures/red_bricks_04_rough_1k.jpg"), true);
+
+        diffuseTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Nearest);
+        diffuseTexture.setAnisotropicFilter(GLTexture.getMaxAnisotropicFilterLevel());
+
+        normalTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Nearest);
+        normalTexture.setAnisotropicFilter(GLTexture.getMaxAnisotropicFilterLevel());
+
+        mrTexture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Nearest);
+        mrTexture.setAnisotropicFilter(GLTexture.getMaxAnisotropicFilterLevel());
     }
 
     /**
@@ -40,11 +62,13 @@ public class ChunkMeshGenerator {
     public void generateChunkModel(Chunk chunk) {
         // Define the attributes for this model
         VertexAttribute position = new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE);
-        VertexAttribute colorUnpacked = new VertexAttribute(VertexAttributes.Usage.ColorUnpacked, 4, ShaderProgram.COLOR_ATTRIBUTE);
+        VertexAttribute normal = new VertexAttribute(VertexAttributes.Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE);
+        VertexAttribute tangent = new VertexAttribute(VertexAttributes.Usage.Tangent, 4, ShaderProgram.TANGENT_ATTRIBUTE);
         VertexAttribute textureCoordinates = new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0");
+        VertexAttribute colorUnpacked = new VertexAttribute(VertexAttributes.Usage.ColorUnpacked, 4, ShaderProgram.COLOR_ATTRIBUTE);
 
         // Init vertices array
-        float[] vertices = new float[((position.numComponents + colorUnpacked.numComponents + textureCoordinates.numComponents) * QUAD_VERTICES * CHUNK_SIZE * CHUNK_SIZE * WORLD_HEIGHT) * CUBE_FACES];
+        float[] vertices = new float[((position.numComponents + normal.numComponents + tangent.numComponents + colorUnpacked.numComponents + textureCoordinates.numComponents) * QUAD_VERTICES * CHUNK_SIZE * CHUNK_SIZE * WORLD_HEIGHT) * CUBE_FACES];
 
         // Populate the vertices array with data
         int vertexOffset = 0;
@@ -68,22 +92,22 @@ public class ChunkMeshGenerator {
 
 
                     if (!top) {
-                        vertexOffset = voxelCube.createTop(vertices, vertexOffset, worldX, worldZ, y, block.getBlockColor(), new TextureRegion(block.getTexture()));
+                        vertexOffset = voxelCube.createTop(vertices, vertexOffset, worldX, y, worldZ, block.getBlockColor(), new TextureRegion(diffuseTexture));
                     }
                     if (!bot) {
-                        vertexOffset = voxelCube.createBottom(vertices, vertexOffset, worldX, worldZ, y, block.getBlockColor(), new TextureRegion(block.getTexture()));
+                        vertexOffset = voxelCube.createBottom(vertices, vertexOffset, worldX, y, worldZ, block.getBlockColor(), new TextureRegion(diffuseTexture));
                     }
                     if (!lef) {
-                        vertexOffset = voxelCube.createLeft(vertices, vertexOffset, worldX, worldZ, y, block.getBlockColor(), new TextureRegion(block.getTexture()));
+                        vertexOffset = voxelCube.createLeft(vertices, vertexOffset, worldX, y, worldZ, block.getBlockColor(), new TextureRegion(diffuseTexture));
                     }
                     if (!rig) {
-                        vertexOffset = voxelCube.createRight(vertices, vertexOffset, worldX, worldZ, y, block.getBlockColor(), new TextureRegion(block.getTexture()));
+                        vertexOffset = voxelCube.createRight(vertices, vertexOffset, worldX, y, worldZ, block.getBlockColor(), new TextureRegion(diffuseTexture));
                     }
                     if (!fro) {
-                        vertexOffset = voxelCube.createFront(vertices, vertexOffset, worldX, worldZ, y, block.getBlockColor(), new TextureRegion(block.getTexture()));
+                        vertexOffset = voxelCube.createFront(vertices, vertexOffset, worldX, y, worldZ, block.getBlockColor(), new TextureRegion(diffuseTexture));
                     }
                     if (!bac) {
-                        vertexOffset = voxelCube.createBack(vertices, vertexOffset, worldX, worldZ, y, block.getBlockColor(), new TextureRegion(block.getTexture()));
+                        vertexOffset = voxelCube.createBack(vertices, vertexOffset, worldX, y, worldZ, block.getBlockColor(), new TextureRegion(diffuseTexture));
                     }
                 }
             }
@@ -95,17 +119,30 @@ public class ChunkMeshGenerator {
         generateIndices(indices);
 
         // Create the mesh
-        Mesh mesh = new Mesh(true, vertices.length, indices.length, position, colorUnpacked, textureCoordinates);
-        mesh.setVertices(vertices);
-        mesh.setIndices(indices);
+        Mesh terrainMesh = new Mesh(true, vertices.length, indices.length, position, normal, tangent, textureCoordinates, colorUnpacked);
+        terrainMesh.setVertices(vertices);
+        terrainMesh.setIndices(indices);
 
         // Create the MeshPart
-        MeshPart meshPart = new MeshPart(null, mesh, 0, size, GL30.GL_TRIANGLES);
+        MeshPart meshPart = new MeshPart(null, terrainMesh, 0, size, GL30.GL_TRIANGLES);
 
         // Create a model out of the MeshPart
+        Material material = new Material();
+        material.set(PBRTextureAttribute.createBaseColorTexture(diffuseTexture));
+        material.set(PBRTextureAttribute.createNormalTexture(normalTexture));
+        material.set(PBRTextureAttribute.createMetallicRoughnessTexture(mrTexture));
+        material.set(PBRColorAttribute.createBaseColorFactor(new Color(Color.WHITE).fromHsv(15, .9f, .8f)));
+//        material.set(PBRColorAttribute.createEmissive(new Color(Color.RED)));
+
         modelBuilder.begin();
-        modelBuilder.part(meshPart, new Material("texture", TextureAttribute.createDiffuse(texture)));
-        chunk.setModel(modelBuilder.end());
+        modelBuilder.part(meshPart, material);
+        Model model = modelBuilder.end();
+
+        for(Mesh modelMesh : model.meshes){
+            MeshTangentSpaceGenerator.computeTangentSpace(modelMesh, material, false, true);
+        }
+
+        chunk.setModel(model);
     }
 
     @SuppressWarnings("PointlessArithmeticExpression")
