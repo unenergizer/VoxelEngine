@@ -62,9 +62,9 @@ public class ChunkMeshGenerator {
     public void generateChunkModel(Chunk chunk) {
         // Define the attributes for this model
         VertexAttribute position = new VertexAttribute(VertexAttributes.Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE);
+        VertexAttribute textureCoordinates = new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0");
         VertexAttribute normal = new VertexAttribute(VertexAttributes.Usage.Normal, 3, ShaderProgram.NORMAL_ATTRIBUTE);
         VertexAttribute tangent = new VertexAttribute(VertexAttributes.Usage.Tangent, 4, ShaderProgram.TANGENT_ATTRIBUTE);
-        VertexAttribute textureCoordinates = new VertexAttribute(VertexAttributes.Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0");
         VertexAttribute colorUnpacked = new VertexAttribute(VertexAttributes.Usage.ColorUnpacked, 4, ShaderProgram.COLOR_ATTRIBUTE);
 
         // Init vertices array
@@ -119,7 +119,7 @@ public class ChunkMeshGenerator {
         generateIndices(indices);
 
         // Create the mesh
-        Mesh terrainMesh = new Mesh(true, vertices.length, indices.length, position, normal, tangent, textureCoordinates, colorUnpacked);
+        Mesh terrainMesh = new Mesh(true, vertices.length, indices.length, position, textureCoordinates, normal, tangent, colorUnpacked);
         terrainMesh.setVertices(vertices);
         terrainMesh.setIndices(indices);
 
@@ -139,7 +139,7 @@ public class ChunkMeshGenerator {
         Model model = modelBuilder.end();
 
         for(Mesh modelMesh : model.meshes){
-            MeshTangentSpaceGenerator.computeTangentSpace(modelMesh, material, false, true);
+            MeshTangentSpaceGenerator.computeTangentSpace(modelMesh, material, true, true);
         }
 
         chunk.setModel(model);
