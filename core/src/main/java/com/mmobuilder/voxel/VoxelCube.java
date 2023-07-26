@@ -32,9 +32,9 @@ public class VoxelCube {
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         // Bottom Right [1,0]
         vertices[vertexOffset++] = x + TILE_SIZE;
@@ -42,9 +42,9 @@ public class VoxelCube {
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         // Top Right [1,1]
         vertices[vertexOffset++] = x + TILE_SIZE;
@@ -52,9 +52,9 @@ public class VoxelCube {
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         // Top Left [0,1]
         vertices[vertexOffset++] = x;
@@ -62,9 +62,9 @@ public class VoxelCube {
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         return vertexOffset;
     }
@@ -81,36 +81,36 @@ public class VoxelCube {
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x;
         vertices[vertexOffset++] = y;
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x + TILE_SIZE;
         vertices[vertexOffset++] = y;
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x + TILE_SIZE;
         vertices[vertexOffset++] = y;
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         return vertexOffset;
     }
@@ -127,36 +127,36 @@ public class VoxelCube {
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x;
         vertices[vertexOffset++] = y + TILE_SIZE;
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x;
         vertices[vertexOffset++] = y + TILE_SIZE;
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x;
         vertices[vertexOffset++] = y;
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         return vertexOffset;
     }
@@ -173,18 +173,18 @@ public class VoxelCube {
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x + TILE_SIZE;
         vertices[vertexOffset++] = y;
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         // Top Right
         vertices[vertexOffset++] = x + TILE_SIZE;
@@ -192,18 +192,18 @@ public class VoxelCube {
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x + TILE_SIZE;
         vertices[vertexOffset++] = y + TILE_SIZE;
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         return vertexOffset;
     }
@@ -220,36 +220,36 @@ public class VoxelCube {
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x + TILE_SIZE;
         vertices[vertexOffset++] = y;
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x + TILE_SIZE;
         vertices[vertexOffset++] = y + TILE_SIZE;
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x;
         vertices[vertexOffset++] = y + TILE_SIZE;
         vertices[vertexOffset++] = z;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         return vertexOffset;
     }
@@ -266,60 +266,58 @@ public class VoxelCube {
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x;
         vertices[vertexOffset++] = y + TILE_SIZE;
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u1;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x + TILE_SIZE;
         vertices[vertexOffset++] = y + TILE_SIZE;
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v1;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         vertices[vertexOffset++] = x + TILE_SIZE;
         vertices[vertexOffset++] = y;
         vertices[vertexOffset++] = z + TILE_SIZE;
         if (enableTexture) vertices[vertexOffset++] = u2;
         if (enableTexture) vertices[vertexOffset++] = v2;
-        if (enableNormals) vertexOffset = addNormals(vertices, vertexOffset);
-        if (enableTangent) vertexOffset = addTangent(vertices, vertexOffset);
-        if (enableColor) vertexOffset = addColor(vertices, vertexOffset, tileColor);
+        vertexOffset = addNormals(vertices, vertexOffset);
+        vertexOffset = addTangent(vertices, vertexOffset);
+        vertexOffset = addColor(vertices, vertexOffset, tileColor);
 
         return vertexOffset;
     }
 
     private int addNormals(float[] vertices, int vertexOffset) {
-        for (int i = 0; i < 3; i++) {
-            vertices[vertexOffset++] = 1f;
-        }
+        if (!enableNormals) return vertexOffset;
+        for (int i = 0; i < 3; i++) vertices[vertexOffset++] = 1f;
         return vertexOffset;
     }
 
     private int addTangent(float[] vertices, int vertexOffset) {
-        for (int i = 0; i < 4; i++) {
-            vertices[vertexOffset++] = 0f;
-        }
+        if (!enableTangent) return vertexOffset;
+        for (int i = 0; i < 4; i++) vertices[vertexOffset++] = 0f;
         return vertexOffset;
     }
 
     private int addColor(float[] vertices, int vertexOffset, Color tileColor) {
+        if (!enableColor) return vertexOffset;
         vertices[vertexOffset++] = tileColor.r;
         vertices[vertexOffset++] = tileColor.g;
         vertices[vertexOffset++] = tileColor.b;
         vertices[vertexOffset++] = tileColor.a;
-
         return vertexOffset;
     }
 }
