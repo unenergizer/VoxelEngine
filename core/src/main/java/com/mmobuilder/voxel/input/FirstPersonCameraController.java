@@ -1,5 +1,6 @@
 package com.mmobuilder.voxel.input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
@@ -24,6 +25,9 @@ public class FirstPersonCameraController extends InputAdapter {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        // Don't move the camera if the cursor isn't being catched.
+        if (!Gdx.input.isCursorCatched()) return false;
+
         float deltaX = lastMouseX - screenX;
         float deltaY = lastMouseY - screenY;
 

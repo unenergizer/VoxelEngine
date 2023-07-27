@@ -12,10 +12,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.StringBuilder;
-import com.mmobuilder.voxel.input.BlockPickController;
-import com.mmobuilder.voxel.input.FirstPersonCameraController;
-import com.mmobuilder.voxel.input.FirstPersonMovementController;
-import com.mmobuilder.voxel.input.KeyboardInput;
+import com.mmobuilder.voxel.input.*;
 import lombok.Getter;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
 import net.mgsx.gltf.scene3d.attributes.PBRCubemapAttribute;
@@ -114,10 +111,10 @@ public class Main extends ApplicationAdapter {
         stageHandler.create();
 
         // Init Input
-        Gdx.input.setCursorCatched(true);
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         camController = new FirstPersonMovementController(camera);
-        camController.setVelocity(30);
+        camController.setVelocity(8);
+        inputMultiplexer.addProcessor(new CursorCatchedController());
         inputMultiplexer.addProcessor(new BlockPickController(this, chunkHandler, camera));
         inputMultiplexer.addProcessor(new KeyboardInput(this));
         inputMultiplexer.addProcessor(camController);
