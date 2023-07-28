@@ -19,7 +19,7 @@ import static com.mmobuilder.voxel.Constants.SLASH;
 @RequiredArgsConstructor
 public class StageHandler extends ApplicationAdapter {
 
-    private final StringBuilder stringBuilder;
+    private final StringBuilder stringBuilder = new StringBuilder();
     private final PerspectiveCamera camera;
     private final ChunkHandler chunkHandler;
     private Stage stage;

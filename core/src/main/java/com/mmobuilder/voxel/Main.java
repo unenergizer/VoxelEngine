@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g3d.ModelCache;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.StringBuilder;
 import com.mmobuilder.voxel.input.*;
 import lombok.Getter;
 import net.mgsx.gltf.loaders.gltf.GLTFLoader;
@@ -24,19 +23,6 @@ import net.mgsx.gltf.scene3d.scene.SceneSkybox;
 import net.mgsx.gltf.scene3d.utils.IBLBuilder;
 
 public class Main extends ApplicationAdapter {
-    /**
-     * One StringBuilder to rule them all, one StringBuilder to find them,
-     * One StringBuilder to bring them all, and in the darkness bind them;
-     * In the Land of Gdx where the triangles lie. ~ Future Tolkien (probably)
-     */
-    private final StringBuilder stringBuilder = new StringBuilder();
-    private SceneManager sceneManager;
-    private SceneAsset sceneAsset;
-    private Cubemap diffuseCubemap;
-    private Cubemap environmentCubemap;
-    private Cubemap specularCubemap;
-    private Texture brdfLUT;
-    private SceneSkybox skybox;
 
     private CrosshairRenderer crosshairRenderer;
 
@@ -105,7 +91,7 @@ public class Main extends ApplicationAdapter {
         chunkHandler.create();
 
         // Init Scene2D and VisUI
-        stageHandler = new StageHandler(stringBuilder, camera, chunkHandler);
+        stageHandler = new StageHandler(camera, chunkHandler);
         stageHandler.create();
 
         // Init Input
