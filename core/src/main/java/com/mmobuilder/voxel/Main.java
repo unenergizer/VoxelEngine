@@ -4,7 +4,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelCache;
@@ -39,8 +38,7 @@ public class Main extends ApplicationAdapter {
     private Texture brdfLUT;
     private SceneSkybox skybox;
 
-    private Texture crosshairTexture;
-    private SpriteBatch batch;
+    private CrosshairRenderer crosshairRenderer;
 
     private Model xyzModel;
     private ModelInstance xyzModelInstance;
@@ -53,11 +51,11 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        crosshairTexture = new Texture(Gdx.files.internal("crosshair.png"));
+        crosshairRenderer = new CrosshairRenderer();
+        crosshairRenderer.create();
 
         // create scene
-        sceneAsset = new GLTFLoader().load(Gdx.files.internal("models/BoomBox/glTF/BoomBox.gltf"));
+        sceneAsset = new GLTFLoader().load(Gdx.files.internal("fixedbody002.gltf"));
         Scene scene = new Scene(sceneAsset.scene);
         sceneManager = new SceneManager();
         sceneManager.addScene(scene);
@@ -160,9 +158,7 @@ public class Main extends ApplicationAdapter {
         sceneManager.render();
 
         // Render Crosshair
-        batch.begin();
-        batch.draw(crosshairTexture, Gdx.graphics.getWidth() / 2f - crosshairTexture.getWidth() / 2f, Gdx.graphics.getHeight() / 2f - crosshairTexture.getHeight() / 2f);
-        batch.end();
+        crosshairRenderer.render();
 
         // Render UI
         stageHandler.render();
@@ -185,7 +181,6 @@ public class Main extends ApplicationAdapter {
         xyzModel.dispose();
 
         // 2D
-        batch.dispose();
-        crosshairTexture.dispose();
+        crosshairRenderer.dispose();
     }
 }
