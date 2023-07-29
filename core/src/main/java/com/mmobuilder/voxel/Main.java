@@ -22,6 +22,7 @@ import lombok.Getter;
 
 public class Main extends ApplicationAdapter {
 
+    @Getter
     private SceneHandler sceneHandler;
     private CrosshairRenderer crosshairRenderer;
     @Getter

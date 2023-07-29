@@ -2,6 +2,7 @@ package com.mmobuilder.voxel.g3d;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cubemap;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -64,9 +65,9 @@ public class SceneHandler extends ApplicationAdapter {
         sceneManager.setSkyBox(skybox);
     }
 
-    public Scene loadModel(String filepath) {
+    public Scene loadModel(FileHandle fileHandle) {
         //"fixedbody002.gltf"
-        SceneAsset sceneAsset = new GLTFLoader().load(Gdx.files.internal(filepath));
+        SceneAsset sceneAsset = new GLTFLoader().load(fileHandle);
         return new Scene(sceneAsset.scene);
     }
 
