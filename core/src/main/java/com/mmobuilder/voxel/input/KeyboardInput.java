@@ -7,7 +7,7 @@ import com.mmobuilder.voxel.g3d.Block;
 import com.mmobuilder.voxel.g3d.BlockType;
 import com.mmobuilder.voxel.Main;
 
-import static com.mmobuilder.voxel.Constants.*;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.*;
 
 public class KeyboardInput extends InputAdapter {
 

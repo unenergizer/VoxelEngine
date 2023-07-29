@@ -12,8 +12,8 @@ import net.mgsx.gltf.loaders.shared.geometry.MeshTangentSpaceGenerator;
 import net.mgsx.gltf.scene3d.attributes.PBRColorAttribute;
 import net.mgsx.gltf.scene3d.attributes.PBRTextureAttribute;
 
-import static com.mmobuilder.voxel.Constants.CHUNK_SIZE;
-import static com.mmobuilder.voxel.Constants.WORLD_HEIGHT;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.CHUNK_SIZE;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.WORLD_HEIGHT;
 
 public class ChunkMeshGenerator {
 

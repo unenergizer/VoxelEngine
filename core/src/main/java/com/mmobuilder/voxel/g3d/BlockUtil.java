@@ -1,6 +1,6 @@
 package com.mmobuilder.voxel.g3d;
 
-import static com.mmobuilder.voxel.Constants.WORLD_HEIGHT;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.WORLD_HEIGHT;
 
 public class BlockUtil {
 

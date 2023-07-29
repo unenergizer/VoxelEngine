@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import static com.mmobuilder.voxel.Constants.*;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.*;
 
 /**
  * This is the class that creates, manages, and disposes of all chunks.

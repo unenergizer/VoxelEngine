@@ -3,7 +3,7 @@ package com.mmobuilder.voxel.g3d;
 import com.badlogic.gdx.graphics.g3d.Model;
 import lombok.Getter;
 
-import static com.mmobuilder.voxel.Constants.*;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.*;
 
 /**
  * A chunk that is a part of a world of multiple chunks. This chunk is responsible

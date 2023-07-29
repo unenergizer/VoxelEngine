@@ -1,9 +1,9 @@
-package com.mmobuilder.voxel;
+package com.mmobuilder.voxel.g3d;
 
 /**
  * Constants here can be adjusted to changes various things about the game world.
  */
-public class Constants {
+public class ChunkConstants {
     /**
      * The maximum number of chunks the camera can see at once.
      */

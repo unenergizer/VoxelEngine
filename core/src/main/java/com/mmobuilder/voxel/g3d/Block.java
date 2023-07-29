@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import lombok.Getter;
 import lombok.Setter;
 
-import static com.mmobuilder.voxel.Constants.SLASH;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.SLASH;
 
 @Getter
 @Setter

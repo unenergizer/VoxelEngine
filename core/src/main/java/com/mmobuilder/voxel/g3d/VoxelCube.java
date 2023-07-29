@@ -3,7 +3,7 @@ package com.mmobuilder.voxel.g3d;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import static com.mmobuilder.voxel.Constants.TILE_SIZE;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.TILE_SIZE;
 
 public class VoxelCube {
 

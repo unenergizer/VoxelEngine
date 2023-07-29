@@ -11,7 +11,7 @@ import com.mmobuilder.voxel.g3d.ChunkHandler;
 import com.mmobuilder.voxel.ui.*;
 import com.mmobuilder.voxel.ui.menu.MainMenuBar;
 
-import static com.mmobuilder.voxel.Constants.SLASH;
+import static com.mmobuilder.voxel.g3d.ChunkConstants.SLASH;
 
 public class FPS extends VisTable implements BuildActor, ForcePosition {
 
