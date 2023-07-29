@@ -1,4 +1,4 @@
-package com.mmobuilder.voxel;
+package com.mmobuilder.voxel.g3d;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -25,7 +25,6 @@ public class SceneHandler extends ApplicationAdapter {
     private final PerspectiveCamera camera;
 
     private SceneManager sceneManager;
-    private SceneAsset sceneAsset;
     private Cubemap diffuseCubemap;
     private Cubemap environmentCubemap;
     private Cubemap specularCubemap;
@@ -67,7 +66,7 @@ public class SceneHandler extends ApplicationAdapter {
 
     public Scene loadModel(String filepath) {
         //"fixedbody002.gltf"
-        sceneAsset = new GLTFLoader().load(Gdx.files.internal(filepath));
+        SceneAsset sceneAsset = new GLTFLoader().load(Gdx.files.internal(filepath));
         return new Scene(sceneAsset.scene);
     }
 
@@ -93,7 +92,6 @@ public class SceneHandler extends ApplicationAdapter {
     @Override
     public void dispose() {
         sceneManager.dispose();
-        sceneAsset.dispose();
         environmentCubemap.dispose();
         diffuseCubemap.dispose();
         specularCubemap.dispose();

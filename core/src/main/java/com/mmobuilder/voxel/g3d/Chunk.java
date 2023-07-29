@@ -1,4 +1,4 @@
-package com.mmobuilder.voxel;
+package com.mmobuilder.voxel.g3d;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import lombok.Getter;

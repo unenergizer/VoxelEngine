@@ -1,4 +1,4 @@
-package com.mmobuilder.voxel;
+package com.mmobuilder.voxel.g2d;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;

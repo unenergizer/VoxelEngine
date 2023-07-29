@@ -1,4 +1,4 @@
-package com.mmobuilder.voxel;
+package com.mmobuilder.voxel.g3d;
 
 import static com.mmobuilder.voxel.Constants.WORLD_HEIGHT;
 

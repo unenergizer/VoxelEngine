@@ -1,4 +1,4 @@
-package com.mmobuilder.voxel;
+package com.mmobuilder.voxel.g3d;
 
 import static com.mmobuilder.voxel.Constants.CHUNK_SIZE;
 import static com.mmobuilder.voxel.Constants.SLASH;

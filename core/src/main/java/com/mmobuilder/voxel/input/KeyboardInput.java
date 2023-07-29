@@ -3,8 +3,8 @@ package com.mmobuilder.voxel.input;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.mmobuilder.voxel.Block;
-import com.mmobuilder.voxel.BlockType;
+import com.mmobuilder.voxel.g3d.Block;
+import com.mmobuilder.voxel.g3d.BlockType;
 import com.mmobuilder.voxel.Main;
 
 import static com.mmobuilder.voxel.Constants.*;
