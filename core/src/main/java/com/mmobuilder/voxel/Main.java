@@ -30,7 +30,7 @@ public class Main extends ApplicationAdapter {
 
     private Model xyzModel;
     private ModelInstance xyzModelInstance;
-    private FirstPersonMovementController camController;
+    private FirstPersonMovementController movementController;
 
     private final ModelCache modelCache = new ModelCache();
 
@@ -62,17 +62,18 @@ public class Main extends ApplicationAdapter {
         chunkHandler.create();
 
         // Init Scene2D and VisUI
-        stageHandler = new StageHandler(camera, chunkHandler);
+        stageHandler = new StageHandler(this, camera);
         stageHandler.create();
 
         // Init Input
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        camController = new FirstPersonMovementController(camera);
-        camController.setVelocity(8);
+        movementController = new FirstPersonMovementController(camera);
+        movementController.setVelocity(8);
+        inputMultiplexer.addProcessor(stageHandler.getInputAdapter());
         inputMultiplexer.addProcessor(new CursorCatchedController());
         inputMultiplexer.addProcessor(new BlockPickController(this, chunkHandler, camera));
         inputMultiplexer.addProcessor(new KeyboardInput(this));
-        inputMultiplexer.addProcessor(camController);
+        inputMultiplexer.addProcessor(movementController);
         inputMultiplexer.addProcessor(new FirstPersonCameraController(camera));
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
@@ -105,8 +106,7 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        camController.update();
-        stageHandler.updateDebugText();
+        movementController.update();
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         sceneHandler.render();
         crosshairRenderer.render();

@@ -2,91 +2,153 @@ package com.mmobuilder.voxel.ui;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.StringBuilder;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.VisUI;
-import com.kotcrab.vis.ui.building.utilities.Alignment;
-import com.kotcrab.vis.ui.widget.VisLabel;
-import com.kotcrab.vis.ui.widget.VisTable;
-import com.mmobuilder.voxel.g3d.ChunkHandler;
-import lombok.RequiredArgsConstructor;
+import com.mmobuilder.voxel.Main;
+import com.mmobuilder.voxel.ui.debug.FPS;
+import com.mmobuilder.voxel.ui.menu.help.About;
+import com.mmobuilder.voxel.ui.menu.help.Controls;
+import com.mmobuilder.voxel.ui.menu.MainMenuBar;
+import lombok.AllArgsConstructor;
 
-import static com.mmobuilder.voxel.Constants.SLASH;
-
-/**
- * Creates and renders the UI elements on the screen.
- */
-@RequiredArgsConstructor
 public class StageHandler extends ApplicationAdapter {
-
-    private final StringBuilder stringBuilder = new StringBuilder();
-    private final PerspectiveCamera camera;
-    private final ChunkHandler chunkHandler;
+    private final UpdateActorEvent updateActorEvent = new UpdateActorEvent();
+    private final Main main;
+    private final PerspectiveCamera gameCamera;
+    private OrthographicCamera uiCamera;
     private Stage stage;
-    private VisLabel fpsLabel;
-    private VisLabel camLocation;
-    private VisLabel chunkLocation;
-    private VisLabel chunkTileLocation;
+
+    public StageHandler(Main main, PerspectiveCamera gameCamera) {
+        this.main = main;
+        this.gameCamera = gameCamera;
+    }
 
     @Override
     public void create() {
-        VisUI.load(Gdx.files.internal("tixel/x1/tixel.json"));
+        VisUI.load(Gdx.files.internal("ui/tixel/x1/tixel.json"));
 
+        // Setup UI Camera and Viewport
+        uiCamera = new OrthographicCamera();
+        uiCamera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        uiCamera.update();
+        ScreenViewport screenViewport = new ScreenViewport(uiCamera);
+        screenViewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+        // Setup the stage
         stage = new Stage();
-        VisTable visTable = new VisTable(true);
-        visTable.add(fpsLabel = new VisLabel("FPS: 99999999999999999999")).align(Alignment.LEFT.getAlignment()).row();
-        visTable.add(camLocation = new VisLabel("CAM XYZ: 99999999999999999999")).align(Alignment.LEFT.getAlignment()).row();
-        visTable.add(chunkLocation = new VisLabel("CHUNK XZ: 99999999999999999999")).align(Alignment.LEFT.getAlignment()).row();
-        visTable.add(chunkTileLocation = new VisLabel("CHUNK TILE XZ: 99999999999999999999")).align(Alignment.LEFT.getAlignment()).row();
-        visTable.pack();
-        visTable.setPosition(10, Gdx.graphics.getHeight() - visTable.getHeight() - 20);
-        stage.addActor(visTable);
+        stage.setViewport(screenViewport);
+        Table root = new Table();
+        root.setFillParent(true);
+        stage.addActor(root);
+
+        // Add and build all the user interface elements
+        MainMenuBar mainMenuBar = new MainMenuBar();
+        addActor(mainMenuBar);
+        addActor(new FileExplorer());
+        addActor(new About());
+        addActor(new FPS(mainMenuBar, gameCamera, main.getChunkHandler()));
+        addActor(new Controls(mainMenuBar));
+
+        // Debug Input
+        stage.addListener(new InputListener() {
+            boolean debug = false;
+
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.F12) {
+                    debug = !debug;
+                    root.setDebug(debug, true);
+                    for (Actor actor : stage.getActors()) {
+                        if (actor instanceof Group) {
+                            Group group = (Group) actor;
+                            group.setDebug(debug, true);
+                        }
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+        });
     }
 
-    private static final String FPS = "FPS: ";
-    private static final String CAM_TILE = "CAM TILE XYZ: ";
-    private static final String CHUNK_LOC = "CHUNK XZ: ";
-    private static final String CHUNK_TILE = "CHUNK TILE XZ: ";
-    public void updateDebugText() {
-        // FPS
-        stringBuilder.append(FPS);
-        stringBuilder.append(Gdx.graphics.getFramesPerSecond());
-        fpsLabel.setText(stringBuilder.toStringAndClear());
+    /**
+     * Adds an Actor to the stage and builds the UI.
+     *
+     * @param actor The buildable actor we want to add to the stage.
+     */
+    public void addActor(BuildActor actor) {
+        stage.addActor(actor.buildActor(this));
+    }
 
-        // Camera tile location
-        stringBuilder.append(CAM_TILE);
-        stringBuilder.append((int) camera.position.x);
-        stringBuilder.append(SLASH);
-        stringBuilder.append((int) camera.position.y);
-        stringBuilder.append(SLASH);
-        stringBuilder.append((int) camera.position.z);
-        camLocation.setText(stringBuilder.toStringAndClear());
-
-        // Current camera chunk
-        stringBuilder.append(CHUNK_LOC);
-        stringBuilder.append(chunkHandler.getCurrentChunkX());
-        stringBuilder.append(SLASH);
-        stringBuilder.append(chunkHandler.getCurrentChunkZ());
-        chunkLocation.setText(stringBuilder.toStringAndClear());
-
-        // Current local chunk tile (0 - Constants.CHUNK_SIZE)
-        stringBuilder.append(CHUNK_TILE);
-        stringBuilder.append(chunkHandler.getChunkTileX());
-        stringBuilder.append(SLASH);
-        stringBuilder.append(chunkHandler.getChunkTileZ());
-        chunkTileLocation.setText(stringBuilder.toStringAndClear());
+    /**
+     * Easy way to fire an event for all actors.
+     *
+     * @param event The event we want to fire.
+     */
+    public void fireEvent(Event event) {
+        for (Actor actor : stage.getActors()) actor.fire(event);
     }
 
     @Override
     public void render() {
-        stage.act(Gdx.graphics.getDeltaTime());
+        uiCamera.update();
+        fireEvent(updateActorEvent);
+        stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         stage.draw();
     }
 
     @Override
     public void dispose() {
-        VisUI.dispose();
         stage.dispose();
+        VisUI.dispose();
+    }
+
+    public InputAdapter getInputAdapter() {
+        return stage;
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height, true);
+        fireEvent(new ResizeWindowEvent(width, height));
+    }
+
+    @AllArgsConstructor
+    public static class ResizeWindowEvent extends Event {
+        private final float width, height;
+    }
+
+    public abstract static class ResizeWindowEventListener implements EventListener {
+        @Override
+        public boolean handle(Event event) {
+            if (!(event instanceof ResizeWindowEvent)) return false;
+            handleEvent(((ResizeWindowEvent) event).width, ((ResizeWindowEvent) event).height);
+            return true;
+        }
+
+        protected abstract void handleEvent(float width, float height);
+    }
+
+
+    @AllArgsConstructor
+    public static class UpdateActorEvent extends Event {
+    }
+
+    public abstract static class UpdateActorEventListener implements EventListener {
+        @Override
+        public boolean handle(Event event) {
+            if (!(event instanceof UpdateActorEvent)) return false;
+            updateActorEvent();
+            return true;
+        }
+
+        protected abstract void updateActorEvent();
     }
 }
