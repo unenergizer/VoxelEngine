@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.io.File;
+
 public class CrosshairRenderer extends ApplicationAdapter {
     private Texture crosshairTexture;
     private SpriteBatch spriteBatch;
@@ -13,7 +15,7 @@ public class CrosshairRenderer extends ApplicationAdapter {
     @Override
     public void create() {
         spriteBatch = new SpriteBatch();
-        crosshairTexture = new Texture(Gdx.files.internal("crosshair.png"));
+        crosshairTexture = new Texture(Gdx.files.internal("textures" + File.separator + "crosshair.png"));
     }
 
     @Override
