@@ -42,6 +42,7 @@ public class FPS extends VisTable implements BuildActor, ForcePosition {
         visTable.add(chunkLocation = new VisLabel("CHUNK XZ: 99999999999999999999")).align(Alignment.LEFT.getAlignment()).row();
         visTable.add(chunkTileLocation = new VisLabel("CHUNK TILE XZ: 99999999999999999999")).align(Alignment.LEFT.getAlignment()).row();
 
+        align(Alignment.LEFT.getAlignment());
         addListener(new StageHandler.UpdateActorEventListener() {
             @Override
             protected void updateActorEvent() {
