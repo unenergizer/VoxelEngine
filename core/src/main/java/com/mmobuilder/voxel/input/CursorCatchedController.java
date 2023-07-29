@@ -6,11 +6,6 @@ import com.badlogic.gdx.InputAdapter;
 
 public class CursorCatchedController extends InputAdapter {
 
-    public CursorCatchedController() {
-        // Default is always catch the cursor.
-        Gdx.input.setCursorCatched(true);
-    }
-
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.ESCAPE && Gdx.input.isCursorCatched()) {
             // Disable cursor catching if the user hits the Escape key.
