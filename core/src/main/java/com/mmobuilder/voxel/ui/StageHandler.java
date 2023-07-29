@@ -53,7 +53,7 @@ public class StageHandler extends ApplicationAdapter {
         addActor(new FileExplorer());
         addActor(new About());
         addActor(new FPS(mainMenuBar, gameCamera, main.getChunkHandler()));
-        addActor(new Controls(mainMenuBar));
+        addActor(new Controls());
         addActor(new FileSelectHack(main));
 
         // Debug Input

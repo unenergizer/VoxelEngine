@@ -1,6 +1,5 @@
 package com.mmobuilder.voxel.ui.menu.help;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -9,15 +8,11 @@ import com.kotcrab.vis.ui.util.TableUtils;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.mmobuilder.voxel.ui.*;
-import com.mmobuilder.voxel.ui.menu.MainMenuBar;
 
 public class Controls extends HideableVisWindow implements BuildActor, ForcePosition {
 
-    private final MainMenuBar mainMenuBar;
-
-    public Controls(MainMenuBar mainMenuBar) {
+    public Controls() {
         super("Controls");
-        this.mainMenuBar = mainMenuBar;
     }
 
     @Override
@@ -61,7 +56,7 @@ public class Controls extends HideableVisWindow implements BuildActor, ForcePosi
 
     public void setPosition() {
         // Put to left of screen under the main menu bar.
-        setPosition(UiConstants.PADDING, Gdx.graphics.getHeight() - mainMenuBar.getHeight() - getHeight() - UiConstants.PADDING);
+        setPosition(UiConstants.PADDING, UiConstants.PADDING);
     }
 
     public static class OpenControlsWindowEvent extends Event {
