@@ -16,7 +16,7 @@ import com.mmobuilder.voxel.ui.menu.MainMenuBar;
 
 import static com.mmobuilder.voxel.g3d.ChunkConstants.SLASH;
 
-public class FPS extends VisTable implements BuildActor, ForcePosition {
+public class Debug extends VisTable implements BuildActor, ForcePosition {
 
     private static final String FPS = "FPS: ";
     private static final String CAM_TILE = "CAM TILE XYZ: ";
@@ -33,7 +33,7 @@ public class FPS extends VisTable implements BuildActor, ForcePosition {
     private VisLabel chunkTileLocation;
     private VisLabel velocity;
 
-    public FPS(MainMenuBar mainMenuBar, PerspectiveCamera gameCamera, Main main) {
+    public Debug(MainMenuBar mainMenuBar, PerspectiveCamera gameCamera, Main main) {
         this.mainMenuBar = mainMenuBar;
         this.gameCamera = gameCamera;
         this.main = main;
