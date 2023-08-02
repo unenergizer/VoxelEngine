@@ -123,6 +123,18 @@ public class KeyboardInput extends InputAdapter {
             main.updateModelInstanceList(true);
         }
 
+        if (keycode == Input.Keys.NUMPAD_ADD) {
+            FirstPersonMovementController movementController = main.getMovementController();
+            float velocity = movementController.getVelocity();
+            movementController.setVelocity(velocity + 1);
+        }
+
+        if (keycode == Input.Keys.NUMPAD_SUBTRACT) {
+            FirstPersonMovementController movementController = main.getMovementController();
+            float velocity = movementController.getVelocity();
+            movementController.setVelocity(velocity - 1);
+        }
+
         return false;
     }
 }

@@ -12,9 +12,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.kotcrab.vis.ui.VisUI;
 import com.mmobuilder.voxel.Main;
 import com.mmobuilder.voxel.ui.debug.FPS;
+import com.mmobuilder.voxel.ui.menu.MainMenuBar;
 import com.mmobuilder.voxel.ui.menu.help.About;
 import com.mmobuilder.voxel.ui.menu.help.Controls;
-import com.mmobuilder.voxel.ui.menu.MainMenuBar;
 import lombok.AllArgsConstructor;
 
 public class StageHandler extends ApplicationAdapter {
@@ -52,7 +52,7 @@ public class StageHandler extends ApplicationAdapter {
         addActor(mainMenuBar);
         addActor(new FileExplorer());
         addActor(new About());
-        addActor(new FPS(mainMenuBar, gameCamera, main.getChunkHandler()));
+        addActor(new FPS(mainMenuBar, gameCamera, main));
         addActor(new Controls());
         addActor(new FileSelectHack(main));
 

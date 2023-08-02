@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.IntSet;
+import lombok.Getter;
 
 public class FirstPersonMovementController extends InputAdapter {
     private static final int STRAFE_LEFT_KEY = Input.Keys.A;
@@ -16,6 +17,7 @@ public class FirstPersonMovementController extends InputAdapter {
     private static final int DOWN_KEY = Input.Keys.SHIFT_LEFT;
     private final Camera camera;
     private final IntSet keys = new IntSet();
+    @Getter
     private float velocity = 5;
     private final Vector3 tmp = new Vector3();
 
@@ -41,6 +43,7 @@ public class FirstPersonMovementController extends InputAdapter {
      * @param velocity the velocity in units per second
      */
     public void setVelocity(float velocity) {
+        if (velocity <= 1) velocity = 1;
         this.velocity = velocity;
     }
 

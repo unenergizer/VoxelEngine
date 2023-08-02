@@ -20,15 +20,13 @@ import com.mmobuilder.voxel.input.*;
 import com.mmobuilder.voxel.ui.StageHandler;
 import lombok.Getter;
 
+@Getter
 public class Main extends ApplicationAdapter {
 
-    @Getter
     private SceneHandler sceneHandler;
     private CrosshairRenderer crosshairRenderer;
-    @Getter
     private ChunkHandler chunkHandler;
     private StageHandler stageHandler;
-
     private Model xyzModel;
     private ModelInstance xyzModelInstance;
     private FirstPersonMovementController movementController;
